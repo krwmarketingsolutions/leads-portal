@@ -147,7 +147,7 @@ tbody tr:hover td{background:#fafbff;}
     <button id="lbtn" class="l-btn" onclick="doLogin()">Sign In</button>
     <div class="l-err" id="err"></div>
   </div>
-  <div class="l-footer">Need access? Contact KRW Marketing Solutions</div>
+
 </div>
 
 <!-- PORTAL -->
@@ -188,8 +188,8 @@ tbody tr:hover td{background:#fafbff;}
     <div class="kpis">
       <div class="kpi"><div class="kpi-lbl">Total Leads</div><div class="kpi-val blue" id="k-total">—</div><div class="kpi-sub">all time</div></div>
       <div class="kpi"><div class="kpi-lbl">This Month</div><div class="kpi-val" id="k-month">—</div><div class="kpi-sub">last 30 days</div></div>
-      <div class="kpi"><div class="kpi-lbl">Forwarded</div><div class="kpi-val green" id="k-forwarded">—</div><div class="kpi-sub">accepted by buyer</div></div>
-      <div class="kpi"><div class="kpi-lbl">Billable</div><div class="kpi-val green" id="k-billable">—</div><div class="kpi-sub">confirmed billable</div></div>
+      <div class="kpi"><div class="kpi-lbl">Billable</div><div class="kpi-val green" id="k-billable">—</div><div class="kpi-sub">signed &amp; accepted</div></div>
+      <div class="kpi"><div class="kpi-lbl">Pending Review</div><div class="kpi-val" id="k-pending" style="color:#d97706">—</div><div class="kpi-sub">chase &amp; contacting</div></div>
     </div>
 
     <!-- GLOBAL FILTERS -->
@@ -373,12 +373,15 @@ async function loadLeads(){
 
     // KPIs
     var month = new Date(Date.now()-30*86400000).toISOString();
-    document.getElementById('k-total').textContent     = allLeads.length;
-    document.getElementById('k-month').textContent     = allLeads.filter(function(l){ return (l.received_at||'') >= month; }).length;
-    document.getElementById('k-forwarded').textContent = allLeads.filter(function(l){ return l.status==='forwarded'; }).length;
-    document.getElementById('k-billable').textContent  = allLeads.filter(function(l){
+    document.getElementById('k-total').textContent    = allLeads.length;
+    document.getElementById('k-month').textContent    = allLeads.filter(function(l){ return (l.received_at||'') >= month; }).length;
+    document.getElementById('k-billable').textContent = allLeads.filter(function(l){
       var ns = (l.buyer_status||'').toLowerCase().trim();
-      return ns.includes('billable') || ns.includes('accepted') || ns==='signed' || ns.startsWith('signed');
+      return ns==='signed' || ns.startsWith('signed') || ns.includes('billable') || ns.includes('accepted');
+    }).length;
+    document.getElementById('k-pending').textContent  = allLeads.filter(function(l){
+      var ns = (l.buyer_status||'').toLowerCase().trim();
+      return ns.includes('chase') || ns.includes('contacting');
     }).length;
 
     document.getElementById('chip-updated').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
