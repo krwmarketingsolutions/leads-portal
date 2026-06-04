@@ -212,6 +212,11 @@ tbody tr:hover td{background:#fafbff;}
             <option value="buyer_rejected">Rejected</option>
             <option value="received">Received</option>
           </select>
+          <select class="fsel" id="f-sort" onchange="renderTables()">
+            <option value="date_desc">Newest First</option>
+            <option value="date_asc">Oldest First</option>
+            <option value="billable">Billable First</option>
+          </select>
           <button class="rbtn" onclick="loadLeads()">↻ Refresh</button>
           <button class="export-btn" onclick="exportCSV()">⬇ CSV</button>
         </div>
@@ -235,8 +240,7 @@ tbody tr:hover td{background:#fafbff;}
               <th>Name</th>
               <th>Email</th>
               <th>State</th>
-              <th>Intake Status</th>
-              <th>NLD Status</th>
+              <th>Status</th>
               <th>Billable</th>
               <th>Notes</th>
             </tr></thead>
@@ -263,8 +267,7 @@ tbody tr:hover td{background:#fafbff;}
               <th>Name</th>
               <th>Email</th>
               <th>State</th>
-              <th>Intake Status</th>
-              <th>Buyer Status</th>
+              <th>Status</th>
               <th>Billable</th>
               <th>Notes</th>
             </tr></thead>
@@ -374,8 +377,8 @@ async function loadLeads(){
     document.getElementById('k-month').textContent     = allLeads.filter(function(l){ return (l.received_at||'') >= month; }).length;
     document.getElementById('k-forwarded').textContent = allLeads.filter(function(l){ return l.status==='forwarded'; }).length;
     document.getElementById('k-billable').textContent  = allLeads.filter(function(l){
-      var ns = (l.buyer_status||'').toLowerCase();
-      return ns.includes('billable') || ns.includes('accepted');
+      var ns = (l.buyer_status||'').toLowerCase().trim();
+      return ns.includes('billable') || ns.includes('accepted') || ns==='signed' || ns.startsWith('signed');
     }).length;
 
     document.getElementById('chip-updated').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
@@ -395,9 +398,34 @@ function renderTables(mva, rs){
   if(rs  !== undefined) _rsLeads  = rs;
 
   var statusFilter = document.getElementById('f-status').value;
+  var sortMode     = document.getElementById('f-sort').value;
 
-  var filteredMVA = statusFilter ? _mvaLeads.filter(function(l){ return l.status===statusFilter; }) : _mvaLeads;
-  var filteredRS  = statusFilter ? _rsLeads.filter(function(l){  return l.status===statusFilter; }) : _rsLeads;
+  var filteredMVA = statusFilter ? _mvaLeads.filter(function(l){ return l.status===statusFilter; }) : _mvaLeads.slice();
+  var filteredRS  = statusFilter ? _rsLeads.filter(function(l){  return l.status===statusFilter; }) : _rsLeads.slice();
+
+  function isBillable(l){
+    var ns = (l.buyer_status||'').toLowerCase().trim();
+    return ns==='signed' || ns.startsWith('signed') || ns.includes('billable') || ns.includes('accepted');
+  }
+
+  function sortLeads(arr){
+    if(sortMode === 'date_asc'){
+      return arr.sort(function(a,b){ return new Date(a.received_at)-new Date(b.received_at); });
+    }
+    if(sortMode === 'billable'){
+      return arr.sort(function(a,b){
+        var ab = isBillable(a) ? 0 : 1;
+        var bb = isBillable(b) ? 0 : 1;
+        if(ab !== bb) return ab - bb;
+        return new Date(b.received_at) - new Date(a.received_at);
+      });
+    }
+    // default: date_desc — newest first
+    return arr.sort(function(a,b){ return new Date(b.received_at)-new Date(a.received_at); });
+  }
+
+  filteredMVA = sortLeads(filteredMVA);
+  filteredRS  = sortLeads(filteredRS);
 
   renderVertTable('mva', filteredMVA,  'MVA');
   renderVertTable('rs',  filteredRS,   'Rideshare');
@@ -430,20 +458,20 @@ function renderVertTable(pfx, leads, label){
     var notes     = l.notes || '';
     var status    = l.status || 'received';
 
-    // Derive billable from NLD status
-    var nldLow = nldStatus.toLowerCase();
-    var billable = nldLow.includes('billable') || nldLow.includes('accepted') ? 'Yes'
+    // Use buyer_status for display (hides internal NLD label from publisher)
+    var displayStatus = nldStatus || status;
+    var nldLow = displayStatus.toLowerCase();
+
+    // Billable derived from status
+    var billable = (nldLow==='signed' || nldLow.startsWith('signed') || nldLow.includes('billable') || nldLow.includes('accepted')) ? 'Yes'
                  : nldLow.includes('disqualified') || nldLow.includes('rejected') ? 'No'
                  : '—';
     var billableColor = billable==='Yes' ? 'color:var(--green);font-weight:700'
                       : billable==='No'  ? 'color:var(--red);font-weight:700'
                       : 'color:var(--slate)';
 
-    // Intake status badge from lead status
-    var intakeBadge = statusBadge(status);
-
-    // NLD / buyer status badge
-    var nldBadge = nldStatus ? nldStatusBadge(nldStatus) : '<span style="color:#cbd5e1;font-size:11px">—</span>';
+    // Status badge — green for Signed, standard colors otherwise
+    var statusBadgeHtml = displayStatusBadge(displayStatus);
 
     var cidDisplay = cid !== '—'
       ? '<span style="font-family:var(--mono);font-size:11px;color:#475569">'+escHtml(cid)+'</span>'
@@ -460,12 +488,34 @@ function renderVertTable(pfx, leads, label){
       '<td style="font-weight:500;white-space:nowrap">'+escHtml(name)+'</td>'+
       '<td style="font-size:11px;color:var(--slate)">'+escHtml(email)+'</td>'+
       '<td style="font-size:12px">'+escHtml(state)+'</td>'+
-      '<td>'+intakeBadge+'</td>'+
-      '<td>'+nldBadge+'</td>'+
+      '<td>'+statusBadgeHtml+'</td>'+
       '<td style="'+billableColor+';font-size:12px">'+billable+'</td>'+
       '<td>'+notesDisplay+'</td>';
     tbody.appendChild(tr);
   });
+}
+
+function displayStatusBadge(s){
+  if(!s) return '<span style="color:#cbd5e1;font-size:11px">—</span>';
+  var low = s.toLowerCase().trim();
+  // Signed / Accepted / Billable → green with checkmark
+  if(low==='signed' || low.startsWith('signed') || low.includes('accepted') || low.includes('billable')){
+    return '<span class="badge b-forwarded">✓ '+escHtml(s)+'</span>';
+  }
+  if(low.includes('disqualified') || low.includes('rejected')){
+    return '<span class="badge b-rejected">✗ '+escHtml(s)+'</span>';
+  }
+  if(low.includes('contacting') || low.includes('chase')){
+    return '<span class="badge b-contacting">'+escHtml(s)+'</span>';
+  }
+  if(low.includes('duplicate')){
+    return '<span class="badge b-disqualified">'+escHtml(s)+'</span>';
+  }
+  // forwarded system status → green
+  if(low==='forwarded'){
+    return '<span class="badge b-forwarded">✓ Forwarded</span>';
+  }
+  return '<span class="badge b-pending">'+escHtml(s)+'</span>';
 }
 
 function statusBadge(status){
@@ -480,14 +530,7 @@ function statusBadge(status){
   return '<span class="badge '+m[0]+'">'+m[1]+'</span>';
 }
 
-function nldStatusBadge(s){
-  var low = s.toLowerCase();
-  var cls = low.includes('accepted') || low.includes('billable') ? 'b-accepted'
-          : low.includes('disqualified') || low.includes('rejected') ? 'b-disqualified'
-          : low.includes('contacting') ? 'b-contacting'
-          : 'b-pending';
-  return '<span class="badge '+cls+'">'+escHtml(s)+'</span>';
-}
+
 
 function formatDate(iso){
   if(!iso) return '—';
@@ -505,10 +548,10 @@ function hide(id){ var e=document.getElementById(id); if(e) e.style.display='non
 
 function exportCSV(){
   if(!allLeads.length){ alert('No leads to export'); return; }
-  var headers = ['Date','CID','First Name','Last Name','Email','State','Campaign','Intake Status','NLD Status','Billable','Notes'];
+  var headers = ['Date','CID','First Name','Last Name','Email','State','Campaign','Status','Billable','Notes'];
   var rows = allLeads.map(function(l){
     var nldLow = (l.buyer_status||'').toLowerCase();
-    var billable = nldLow.includes('billable')||nldLow.includes('accepted') ? 'Yes'
+    var billable = nldLow.includes('billable')||nldLow.includes('accepted')||nldLow.includes('signed') ? 'Yes'
                  : nldLow.includes('disqualified')||nldLow.includes('rejected') ? 'No' : '';
     return [
       (l.received_at||'').split('T')[0],
@@ -519,7 +562,6 @@ function exportCSV(){
       l.state||'',
       l.campaign||'',
       l.status||'',
-      l.buyer_status||'',
       billable,
       l.notes||''
     ].map(function(v){ return '"'+(String(v).replace(/"/g,'""'))+'"'; }).join(',');
