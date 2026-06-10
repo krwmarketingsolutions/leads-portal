@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KRW Publisher Portal — Leads</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+:root{
+  --navy:#0f1c3f;
+  --navy-mid:#1e3a8a;
+  --blue:#2563eb;
+  --blue-lt:#dbeafe;
+  --green:#15803d;
+  --green-lt:#dcfce7;
+  --red:#b91c1c;
+  --red-lt:#fee2e2;
+  --amber:#b45309;
+  --amber-lt:#fef3c7;
+  --slate:#64748b;
+  --border:#e9ecef;
+  --bg:#f4f6fb;
+  --surface:#fff;
+  --radius:12px;
+  --radius-sm:8px;
+  --font:'DM Sans',sans-serif;
+  --mono:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);background:var(--bg);color:var(--navy);min-height:100vh;}
+
+/* ── LOGIN ── */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,var(--navy) 0%,#1e3a8a 100%);}
+.login-box{background:var(--surface);border-radius:18px;padding:46px 42px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.4);}
+.l-brand{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--blue);margin-bottom:12px;}
+.l-title{font-size:24px;font-weight:700;color:var(--navy);margin-bottom:5px;}
+.l-sub{font-size:13px;color:var(--slate);margin-bottom:30px;}
+.l-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--slate);display:block;margin-bottom:8px;}
+.l-input{width:100%;padding:13px 15px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:15px;font-family:var(--mono);outline:none;transition:border .15s,box-shadow .15s;color:var(--navy);}
+.l-input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1);}
+.l-btn{width:100%;margin-top:14px;padding:14px;background:var(--navy);color:#fff;border:none;border-radius:var(--radius-sm);font-size:15px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background .15s;}
+.l-btn:hover:not(:disabled){background:var(--blue);}
+.l-btn:disabled{opacity:.5;cursor:not-allowed;}
+.l-err{margin-top:12px;background:#fef2f2;color:#991b1b;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:11px 14px;font-size:13px;display:none;}
+.l-footer{text-align:center;font-size:11px;color:rgba(255,255,255,.3);margin-top:20px;}
+
+/* ── TOPBAR ── */
+#portal-screen{display:none;}
+.topbar{background:var(--navy);height:56px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.tb-left{display:flex;align-items:center;gap:10px;}
+.tb-co{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.4);}
+.tb-sep{color:rgba(255,255,255,.15);}
+.tb-user{font-size:13px;font-weight:600;color:#fff;}
+.tb-right{display:flex;align-items:center;gap:10px;}
+.tb-tag{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:3px 12px;font-size:11px;font-weight:600;color:rgba(255,255,255,.7);}
+.tb-signout{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;padding:6px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:500;}
+.tb-signout:hover{background:rgba(255,255,255,.18);}
+
+/* ── BODY ── */
+.body{padding:28px 32px;max-width:1160px;margin:0 auto;}
+@media(max-width:700px){.body{padding:16px;}}
+
+/* ── BANNER ── */
+.banner{background:linear-gradient(135deg,var(--navy),#1e40af);border-radius:var(--radius);padding:24px 28px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:22px;}
+.banner-title{font-size:20px;font-weight:700;margin-bottom:3px;}
+.banner-sub{font-size:13px;opacity:.65;}
+.banner-chips{display:flex;gap:10px;flex-wrap:wrap;}
+.b-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:10px 18px;text-align:center;min-width:110px;}
+.b-chip-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.55;margin-bottom:5px;}
+.b-chip-val{font-size:14px;font-weight:700;font-family:var(--mono);}
+
+/* ── KPIS ── */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
+@media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr);}}
+.kpi{background:var(--surface);border-radius:var(--radius);padding:18px 20px;border:1px solid var(--border);}
+.kpi-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--slate);margin-bottom:8px;}
+.kpi-val{font-size:32px;font-weight:700;line-height:1;color:var(--navy);}
+.kpi-val.green{color:var(--green);}
+.kpi-val.blue{color:var(--blue);}
+.kpi-sub{font-size:11px;color:#cbd5e1;margin-top:5px;}
+
+/* ── VERTICAL SECTIONS ── */
+.vert-section{margin-bottom:24px;}
+.vert-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.vert-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.vert-pill.mva{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.vert-pill.rideshare{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+.vert-dot{width:8px;height:8px;border-radius:50%;}
+.vert-dot.mva{background:#2563eb;}
+.vert-dot.rideshare{background:#16a34a;}
+.vert-count{font-size:12px;color:var(--slate);font-weight:400;}
+
+/* ── CARD ── */
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+.card-hdr{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:#fafbfd;}
+.card-title{font-size:13px;font-weight:700;color:var(--navy);}
+.card-sub{font-size:11px;color:var(--slate);margin-top:2px;}
+.filters{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.fsel{padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;background:var(--surface);outline:none;color:#374151;font-family:var(--font);}
+.rbtn{padding:6px 12px;background:#f1f5f9;border:1px solid var(--border);border-radius:7px;font-size:12px;cursor:pointer;font-weight:500;color:#374151;font-family:var(--font);}
+.rbtn:hover{background:#e2e8f0;}
+.export-btn{padding:6px 13px;background:var(--navy);color:#fff;border:none;border-radius:7px;font-size:12px;cursor:pointer;font-weight:600;font-family:var(--font);}
+.export-btn:hover{background:var(--blue);}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:12.5px;}
+thead{background:#f8fafc;}
+th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--slate);border-bottom:1px solid #f1f5f9;white-space:nowrap;}
+td{padding:11px 14px;border-bottom:1px solid #f8fafc;color:#374151;vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:hover td{background:#fafbff;}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.b-forwarded{background:var(--green-lt);color:var(--green);}
+.b-rejected{background:var(--red-lt);color:var(--red);}
+.b-received{background:var(--blue-lt);color:#1d4ed8;}
+.b-pending{background:var(--amber-lt);color:var(--amber);}
+.b-disqualified{background:#f1f5f9;color:var(--slate);}
+.b-accepted{background:var(--green-lt);color:var(--green);}
+.b-contacting{background:#fef3c7;color:#92400e;}
+
+/* ── NOTES CELL ── */
+.notes-cell{max-width:220px;font-size:11px;color:var(--slate);line-height:1.5;white-space:normal;}
+
+/* ── STATES ── */
+.st{padding:48px 20px;text-align:center;}
+.st-ico{font-size:32px;margin-bottom:10px;opacity:.35;}
+.st-t{font-size:13px;font-weight:600;color:var(--slate);margin-bottom:4px;}
+.st-s{font-size:11px;color:#cbd5e1;}
+.spin{width:26px;height:26px;border:3px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:sp .7s linear infinite;margin:0 auto 10px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="l-brand">KRW Marketing Solutions</div>
+    <div class="l-title">Publisher Portal</div>
+    <div class="l-sub">Sign in to view your leads and conversions</div>
+    <label class="l-label" for="pid">Your Publisher ID</label>
+    <input id="pid" class="l-input" type="text" placeholder="KRW-LAIRD-2026-ANS" autocomplete="off" spellcheck="false"/>
+    <button id="lbtn" class="l-btn" onclick="doLogin()">Sign In</button>
+    <div class="l-err" id="err"></div>
+  </div>
+
+</div>
+
+<!-- PORTAL -->
+<div id="portal-screen">
+  <div class="topbar">
+    <div class="tb-left">
+      <span class="tb-co">KRW Marketing</span>
+      <span class="tb-sep">|</span>
+      <span class="tb-user" id="tb-name">Dashboard</span>
+    </div>
+    <div class="tb-right">
+      <span class="tb-tag" id="tb-tag">Leads</span>
+      <button class="tb-signout" onclick="doLogout()">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="body">
+
+    <!-- BANNER -->
+    <div class="banner">
+      <div>
+        <div class="banner-title" id="wb-name">Welcome back</div>
+        <div class="banner-sub" id="wb-sub">Publisher Dashboard</div>
+      </div>
+      <div class="banner-chips">
+        <div class="b-chip">
+          <div class="b-chip-lbl">Portal ID</div>
+          <div class="b-chip-val" id="chip-id">—</div>
+        </div>
+        <div class="b-chip">
+          <div class="b-chip-lbl">Last Updated</div>
+          <div class="b-chip-val" id="chip-updated">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- KPIS -->
+    <div class="kpis">
+      <div class="kpi"><div class="kpi-lbl">Total Leads</div><div class="kpi-val blue" id="k-total">—</div><div class="kpi-sub">all time</div></div>
+      <div class="kpi"><div class="kpi-lbl">This Month</div><div class="kpi-val" id="k-month">—</div><div class="kpi-sub">last 30 days</div></div>
+      <div class="kpi"><div class="kpi-lbl">Billable</div><div class="kpi-val green" id="k-billable">—</div><div class="kpi-sub">signed &amp; accepted</div></div>
+      <div class="kpi"><div class="kpi-lbl">Pending Review</div><div class="kpi-val" id="k-pending" style="color:#d97706">—</div><div class="kpi-sub">chase &amp; contacting</div></div>
+    </div>
+
+    <!-- GLOBAL FILTERS -->
+    <div class="card" style="margin-bottom:24px;">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">Lead Log</div>
+          <div class="card-sub">All leads — separated by vertical</div>
+        </div>
+        <div class="filters">
+          <select class="fsel" id="f-days" onchange="loadLeads()">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="9999">All Time</option>
+          </select>
+          <select class="fsel" id="f-status" onchange="renderTables()">
+            <option value="">All Statuses</option>
+            <option value="forwarded">Forwarded</option>
+            <option value="buyer_rejected">Rejected</option>
+            <option value="received">Received</option>
+          </select>
+          <select class="fsel" id="f-sort" onchange="renderTables()">
+            <option value="date_desc">Newest First</option>
+            <option value="date_asc">Oldest First</option>
+            <option value="billable">Billable First</option>
+          </select>
+          <button class="rbtn" onclick="loadLeads()">↻ Refresh</button>
+          <button class="export-btn" onclick="exportCSV()">⬇ CSV</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROBLOX SECTION -->
+    <div class="vert-section" id="section-roblox">
+      <div class="vert-header">
+        <div class="vert-pill mva"><span class="vert-dot mva"></span>Roblox Mass Tort</div>
+        <span class="vert-count" id="mva-count"></span>
+      </div>
+      <div class="card">
+        <div id="mva-load" class="st"><div class="spin"></div><div class="st-t">Loading Roblox leads...</div></div>
+        <div id="mva-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No Roblox leads found</div><div class="st-s">Leads will appear here once submitted</div></div>
+        <div id="mva-tbl-wrap" class="tbl-wrap" style="display:none">
+          <table>
+            <thead><tr>
+              <th>Date</th>
+              <th>CID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>State</th>
+              <th>Status</th>
+              <th>Billable</th>
+              <th>Notes</th>
+            </tr></thead>
+            <tbody id="mva-tbl"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIDESHARE SECTION -->
+    <div class="vert-section" id="section-rideshare">
+      <div class="vert-header">
+        <div class="vert-pill rideshare"><span class="vert-dot rideshare"></span>Rideshare — Uber &amp; Lyft</div>
+        <span class="vert-count" id="rs-count"></span>
+      </div>
+      <div class="card">
+        <div id="rs-load" class="st"><div class="spin"></div><div class="st-t">Loading Rideshare leads...</div></div>
+        <div id="rs-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No Rideshare leads found</div><div class="st-s">Leads will appear here once submitted</div></div>
+        <div id="rs-tbl-wrap" class="tbl-wrap" style="display:none">
+          <table>
+            <thead><tr>
+              <th>Date</th>
+              <th>CID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>State</th>
+              <th>Status</th>
+              <th>Billable</th>
+              <th>Notes</th>
+            </tr></thead>
+            <tbody id="rs-tbl"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+var API      = 'https://krw-backend-production.up.railway.app';
+var API_KEY  = '64tgzb5ostadx1azjio9crdlduw4vf29';
+var S        = null;
+var allLeads = [];
+
+window.addEventListener('load', function(){
+  try{
+    var raw = sessionStorage.getItem('krw_leads_sess');
+    if(raw){ S = JSON.parse(raw); renderPortal(); }
+  }catch(e){}
+});
+
+document.getElementById('pid').addEventListener('keydown', function(e){
+  if(e.key==='Enter') doLogin();
+});
+
+async function doLogin(){
+  var pid   = document.getElementById('pid').value.trim();
+  var errEl = document.getElementById('err');
+  var btn   = document.getElementById('lbtn');
+  errEl.style.display = 'none';
+  if(!pid){ document.getElementById('pid').focus(); return; }
+  btn.textContent = 'Signing in…'; btn.disabled = true;
+  try{
+    var r  = await fetch(API+'/publishers/login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({pub_id: pid})
+    });
+    var d = await r.json();
+    if(d.ok){
+      S = {pub_id: d.pub_id, portal_id: pid, name: d.name, company: d.company||''};
+      sessionStorage.setItem('krw_leads_sess', JSON.stringify(S));
+      renderPortal();
+    } else {
+      errEl.textContent = 'Publisher ID not found. Please check and try again.';
+      errEl.style.display = '';
+    }
+  } catch(e){
+    errEl.textContent = 'Unable to connect. Please try again.';
+    errEl.style.display = '';
+  }
+  btn.textContent = 'Sign In'; btn.disabled = false;
+}
+
+function renderPortal(){
+  document.getElementById('login-screen').style.display  = 'none';
+  document.getElementById('portal-screen').style.display = 'block';
+  var first = (S.name||'').split(' ')[0] || S.portal_id;
+  document.getElementById('tb-name').textContent   = S.name || S.portal_id;
+  document.getElementById('wb-name').textContent   = 'Welcome back, '+first+'!';
+  document.getElementById('wb-sub').textContent    = (S.company ? S.company+' · ' : '')+'Portal ID: '+S.portal_id;
+  document.getElementById('chip-id').textContent   = S.portal_id;
+  loadLeads();
+}
+
+function doLogout(){
+  sessionStorage.removeItem('krw_leads_sess');
+  S = null;
+  document.getElementById('portal-screen').style.display = 'none';
+  document.getElementById('login-screen').style.display  = '';
+  document.getElementById('pid').value = '';
+}
+
+async function loadLeads(){
+  if(!S) return;
+  var days = document.getElementById('f-days').value;
+
+  // Show loaders
+  ['mva','rs'].forEach(function(pfx){
+    show(pfx+'-load'); hide(pfx+'-empty'); hide(pfx+'-tbl-wrap');
+  });
+
+  try{
+    var daysParam = parseInt(days) >= 9999 ? 9999 : parseInt(days);
+    // Fetch both campaigns in parallel using pub_id
+    var [mvaRes, rsRes] = await Promise.all([
+      fetch(API+'/leads/feed?pub='+encodeURIComponent(S.pub_id)+'&campaign=roblox-mt&days='+daysParam+'&limit=500',
+        {headers:{'x-api-key': API_KEY}}),
+      fetch(API+'/leads/feed?pub='+encodeURIComponent(S.pub_id)+'&campaign=rideshare-tb&days='+daysParam+'&limit=500',
+        {headers:{'x-api-key': API_KEY}})
+    ]);
+
+    var mvaData = await mvaRes.json();
+    var rsData  = await rsRes.json();
+
+    var mvaLeads = mvaData.leads || [];
+    var rsLeads  = rsData.leads  || [];
+    allLeads = mvaLeads.concat(rsLeads);
+
+    // KPIs
+    var month = new Date(Date.now()-30*86400000).toISOString();
+    document.getElementById('k-total').textContent    = allLeads.length;
+    document.getElementById('k-month').textContent    = allLeads.filter(function(l){ return (l.received_at||'') >= month; }).length;
+    document.getElementById('k-billable').textContent = allLeads.filter(function(l){
+      var ns = (l.buyer_status||'').toLowerCase().trim();
+      return ns==='signed' || ns.startsWith('signed') || ns.includes('billable') || ns.includes('accepted');
+    }).length;
+    document.getElementById('k-pending').textContent  = allLeads.filter(function(l){
+      var ns = (l.buyer_status||'').toLowerCase().trim();
+      return ns.includes('chase') || ns.includes('contacting');
+    }).length;
+
+    document.getElementById('chip-updated').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+    renderTables(mvaLeads, rsLeads);
+
+  } catch(e){
+    ['mva','rs'].forEach(function(pfx){ hide(pfx+'-load'); });
+    console.error('Load error:', e.message);
+  }
+}
+
+var _mvaLeads = [], _rsLeads = [];
+
+function renderTables(mva, rs){
+  if(mva !== undefined) _mvaLeads = mva;
+  if(rs  !== undefined) _rsLeads  = rs;
+
+  var statusFilter = document.getElementById('f-status').value;
+  var sortMode     = document.getElementById('f-sort').value;
+
+  var filteredMVA = statusFilter ? _mvaLeads.filter(function(l){ return l.status===statusFilter; }) : _mvaLeads.slice();
+  var filteredRS  = statusFilter ? _rsLeads.filter(function(l){  return l.status===statusFilter; }) : _rsLeads.slice();
+
+  function isBillable(l){
+    var ns = (l.buyer_status||'').toLowerCase().trim();
+    return ns==='signed' || ns.startsWith('signed') || ns.includes('billable') || ns.includes('accepted');
+  }
+
+  function sortLeads(arr){
+    if(sortMode === 'date_asc'){
+      return arr.sort(function(a,b){ return new Date(a.received_at)-new Date(b.received_at); });
+    }
+    if(sortMode === 'billable'){
+      return arr.sort(function(a,b){
+        var ab = isBillable(a) ? 0 : 1;
+        var bb = isBillable(b) ? 0 : 1;
+        if(ab !== bb) return ab - bb;
+        return new Date(b.received_at) - new Date(a.received_at);
+      });
+    }
+    // default: date_desc — newest first
+    return arr.sort(function(a,b){ return new Date(b.received_at)-new Date(a.received_at); });
+  }
+
+  filteredMVA = sortLeads(filteredMVA);
+  filteredRS  = sortLeads(filteredRS);
+
+  renderVertTable('mva', filteredMVA,  'Roblox');
+  renderVertTable('rs',  filteredRS,   'Rideshare');
+}
+
+function renderVertTable(pfx, leads, label){
+  var countEl = document.getElementById(pfx === 'mva' ? 'mva-count' : 'rs-count');
+  if(countEl) countEl.textContent = leads.length + ' lead' + (leads.length!==1?'s':'');
+
+  hide(pfx+'-load');
+
+  if(!leads.length){
+    show(pfx+'-empty');
+    hide(pfx+'-tbl-wrap');
+    return;
+  }
+  hide(pfx+'-empty');
+  show(pfx+'-tbl-wrap');
+
+  var tbody = document.getElementById(pfx+'-tbl');
+  tbody.innerHTML = '';
+
+  leads.forEach(function(l){
+    var date      = formatDate(l.received_at);
+    var cid       = l.buyer_intake_id || '—';
+    var name      = [l.first_name, l.last_name].filter(Boolean).join(' ') || '—';
+    var email     = l.email || '—';
+    var state     = l.state || '—';
+    var nldStatus = l.buyer_status || '';
+    var notes     = l.notes || '';
+    var status    = l.status || 'received';
+
+    // Use buyer_status for display (hides internal NLD label from publisher)
+    var displayStatus = nldStatus || status;
+    var nldLow = displayStatus.toLowerCase();
+
+    // Billable derived from status
+    var billable = (nldLow==='signed' || nldLow.startsWith('signed') || nldLow.includes('billable') || nldLow.includes('accepted')) ? 'Yes'
+                 : nldLow.includes('disqualified') || nldLow.includes('rejected') ? 'No'
+                 : '—';
+    var billableColor = billable==='Yes' ? 'color:var(--green);font-weight:700'
+                      : billable==='No'  ? 'color:var(--red);font-weight:700'
+                      : 'color:var(--slate)';
+
+    // Status badge — green for Signed, standard colors otherwise
+    var statusBadgeHtml = displayStatusBadge(displayStatus);
+
+    var cidDisplay = cid !== '—'
+      ? '<span style="font-family:var(--mono);font-size:11px;color:#475569">'+escHtml(cid)+'</span>'
+      : '<span style="color:#cbd5e1">—</span>';
+
+    var notesDisplay = notes
+      ? '<div class="notes-cell">'+escHtml(notes.substring(0,120))+(notes.length>120?'…':'')+'</div>'
+      : '<span style="color:#cbd5e1;font-size:11px">—</span>';
+
+    var tr = document.createElement('tr');
+    tr.innerHTML =
+      '<td style="color:var(--slate);font-size:11px;white-space:nowrap">'+date+'</td>'+
+      '<td>'+cidDisplay+'</td>'+
+      '<td style="font-weight:500;white-space:nowrap">'+escHtml(name)+'</td>'+
+      '<td style="font-size:11px;color:var(--slate)">'+escHtml(email)+'</td>'+
+      '<td style="font-size:12px">'+escHtml(state)+'</td>'+
+      '<td>'+statusBadgeHtml+'</td>'+
+      '<td style="'+billableColor+';font-size:12px">'+billable+'</td>'+
+      '<td>'+notesDisplay+'</td>';
+    tbody.appendChild(tr);
+  });
+}
+
+function displayStatusBadge(s){
+  if(!s) return '<span style="color:#cbd5e1;font-size:11px">—</span>';
+  var low = s.toLowerCase().trim();
+  // Signed / Accepted / Billable → green with checkmark
+  if(low==='signed' || low.startsWith('signed') || low.includes('accepted') || low.includes('billable')){
+    return '<span class="badge b-forwarded">✓ '+escHtml(s)+'</span>';
+  }
+  if(low.includes('disqualified') || low.includes('rejected')){
+    return '<span class="badge b-rejected">✗ '+escHtml(s)+'</span>';
+  }
+  if(low.includes('contacting') || low.includes('chase')){
+    return '<span class="badge b-contacting">'+escHtml(s)+'</span>';
+  }
+  if(low.includes('duplicate')){
+    return '<span class="badge b-disqualified">'+escHtml(s)+'</span>';
+  }
+  // forwarded system status → green
+  if(low==='forwarded'){
+    return '<span class="badge b-forwarded">✓ Forwarded</span>';
+  }
+  return '<span class="badge b-pending">'+escHtml(s)+'</span>';
+}
+
+function statusBadge(status){
+  var map = {
+    'forwarded':      ['b-forwarded','✓ Forwarded'],
+    'buyer_rejected': ['b-rejected','✗ Rejected'],
+    'received':       ['b-received','● Received'],
+    'duplicate':      ['b-disqualified','Duplicate'],
+    'error':          ['b-rejected','Error'],
+  };
+  var m = map[status] || ['b-pending', status];
+  return '<span class="badge '+m[0]+'">'+m[1]+'</span>';
+}
+
+
+
+function formatDate(iso){
+  if(!iso) return '—';
+  var d = new Date(iso);
+  return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear()+
+    ' <span style="color:#94a3b8">'+d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})+'</span>';
+}
+
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function show(id){ var e=document.getElementById(id); if(e) e.style.display=''; }
+function hide(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }
+
+function exportCSV(){
+  if(!allLeads.length){ alert('No leads to export'); return; }
+  var headers = ['Date','CID','First Name','Last Name','Email','State','Campaign','Status','Billable','Notes'];
+  var rows = allLeads.map(function(l){
+    var nldLow = (l.buyer_status||'').toLowerCase();
+    var billable = nldLow.includes('billable')||nldLow.includes('accepted')||nldLow.includes('signed') ? 'Yes'
+                 : nldLow.includes('disqualified')||nldLow.includes('rejected') ? 'No' : '';
+    return [
+      (l.received_at||'').split('T')[0],
+      l.buyer_intake_id||'',
+      l.first_name||'',
+      l.last_name||'',
+      l.email||'',
+      l.state||'',
+      l.campaign||'',
+      l.status||'',
+      billable,
+      l.notes||''
+    ].map(function(v){ return '"'+(String(v).replace(/"/g,'""'))+'"'; }).join(',');
+  });
+  var csv = [headers.join(',')].concat(rows).join('\n');
+  var a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = 'leads-'+S.portal_id+'-'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+}
+</script>
+</body>
+</html>
