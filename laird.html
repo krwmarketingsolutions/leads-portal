@@ -227,12 +227,12 @@ tbody tr:hover td{background:#fafbff;}
     <div class="vert-section" id="section-roblox">
       <div class="vert-header">
         <div class="vert-pill mva"><span class="vert-dot mva"></span>Roblox Mass Tort</div>
-        <span class="vert-count" id="mva-count"></span>
+        <span class="vert-count" id="rb-count"></span>
       </div>
       <div class="card">
-        <div id="mva-load" class="st"><div class="spin"></div><div class="st-t">Loading Roblox leads...</div></div>
-        <div id="mva-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No Roblox leads found</div><div class="st-s">Leads will appear here once submitted</div></div>
-        <div id="mva-tbl-wrap" class="tbl-wrap" style="display:none">
+        <div id="rb-load" class="st"><div class="spin"></div><div class="st-t">Loading Roblox leads...</div></div>
+        <div id="rb-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No Roblox leads found</div><div class="st-s">Leads will appear here once submitted</div></div>
+        <div id="rb-tbl-wrap" class="tbl-wrap" style="display:none">
           <table>
             <thead><tr>
               <th>Date</th>
@@ -244,7 +244,7 @@ tbody tr:hover td{background:#fafbff;}
               <th>Billable</th>
               <th>Notes</th>
             </tr></thead>
-            <tbody id="mva-tbl"></tbody>
+            <tbody id="rb-tbl"></tbody>
           </table>
         </div>
       </div>
@@ -350,7 +350,7 @@ async function loadLeads(){
   var days = document.getElementById('f-days').value;
 
   // Show loaders
-  ['mva','rs'].forEach(function(pfx){
+  ['rb','rs'].forEach(function(pfx){
     show(pfx+'-load'); hide(pfx+'-empty'); hide(pfx+'-tbl-wrap');
   });
 
@@ -389,7 +389,7 @@ async function loadLeads(){
     renderTables(mvaLeads, rsLeads);
 
   } catch(e){
-    ['mva','rs'].forEach(function(pfx){ hide(pfx+'-load'); });
+    ['rb','rs'].forEach(function(pfx){ hide(pfx+'-load'); });
     console.error('Load error:', e.message);
   }
 }
@@ -430,12 +430,12 @@ function renderTables(mva, rs){
   filteredMVA = sortLeads(filteredMVA);
   filteredRS  = sortLeads(filteredRS);
 
-  renderVertTable('mva', filteredMVA,  'Roblox');
+  renderVertTable('rb', filteredMVA,  'Roblox');
   renderVertTable('rs',  filteredRS,   'Rideshare');
 }
 
 function renderVertTable(pfx, leads, label){
-  var countEl = document.getElementById(pfx === 'mva' ? 'mva-count' : 'rs-count');
+  var countEl = document.getElementById(pfx === 'rb' ? 'rb-count' : 'rs-count');
   if(countEl) countEl.textContent = leads.length + ' lead' + (leads.length!==1?'s':'');
 
   hide(pfx+'-load');
