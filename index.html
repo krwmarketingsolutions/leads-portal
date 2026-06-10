@@ -3,34 +3,20 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>KRW Publisher Portal — Leads</title>
+<title>KRW Publisher Portal</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
-
 :root{
-  --navy:#0f1c3f;
-  --navy-mid:#1e3a8a;
-  --blue:#2563eb;
-  --blue-lt:#dbeafe;
-  --green:#15803d;
-  --green-lt:#dcfce7;
-  --red:#b91c1c;
-  --red-lt:#fee2e2;
-  --amber:#b45309;
-  --amber-lt:#fef3c7;
-  --slate:#64748b;
-  --border:#e9ecef;
-  --bg:#f4f6fb;
-  --surface:#fff;
-  --radius:12px;
-  --radius-sm:8px;
-  --font:'DM Sans',sans-serif;
-  --mono:'DM Mono',monospace;
+  --navy:#0f1c3f;--navy-mid:#1e3a8a;--blue:#2563eb;--blue-lt:#dbeafe;
+  --green:#15803d;--green-lt:#dcfce7;--red:#b91c1c;--red-lt:#fee2e2;
+  --amber:#b45309;--amber-lt:#fef3c7;--slate:#64748b;--border:#e9ecef;
+  --bg:#f4f6fb;--surface:#fff;--radius:12px;--radius-sm:8px;
+  --font:'DM Sans',sans-serif;--mono:'DM Mono',monospace;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:var(--font);background:var(--bg);color:var(--navy);min-height:100vh;}
 
-/* ── LOGIN ── */
+/* LOGIN */
 #login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(135deg,var(--navy) 0%,#1e3a8a 100%);}
 .login-box{background:var(--surface);border-radius:18px;padding:46px 42px;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,.4);}
 .l-brand{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:var(--blue);margin-bottom:12px;}
@@ -43,9 +29,8 @@ body{font-family:var(--font);background:var(--bg);color:var(--navy);min-height:1
 .l-btn:hover:not(:disabled){background:var(--blue);}
 .l-btn:disabled{opacity:.5;cursor:not-allowed;}
 .l-err{margin-top:12px;background:#fef2f2;color:#991b1b;border:1px solid #fecaca;border-radius:var(--radius-sm);padding:11px 14px;font-size:13px;display:none;}
-.l-footer{text-align:center;font-size:11px;color:rgba(255,255,255,.3);margin-top:20px;}
 
-/* ── TOPBAR ── */
+/* TOPBAR */
 #portal-screen{display:none;}
 .topbar{background:var(--navy);height:56px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
 .tb-left{display:flex;align-items:center;gap:10px;}
@@ -57,11 +42,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--navy);min-height:1
 .tb-signout{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;padding:6px 14px;border-radius:7px;font-size:12px;cursor:pointer;font-family:var(--font);font-weight:500;}
 .tb-signout:hover{background:rgba(255,255,255,.18);}
 
-/* ── BODY ── */
+/* BODY */
 .body{padding:28px 32px;max-width:1160px;margin:0 auto;}
 @media(max-width:700px){.body{padding:16px;}}
 
-/* ── BANNER ── */
+/* BANNER */
 .banner{background:linear-gradient(135deg,var(--navy),#1e40af);border-radius:var(--radius);padding:24px 28px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:22px;}
 .banner-title{font-size:20px;font-weight:700;margin-bottom:3px;}
 .banner-sub{font-size:13px;opacity:.65;}
@@ -70,7 +55,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--navy);min-height:1
 .b-chip-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.55;margin-bottom:5px;}
 .b-chip-val{font-size:14px;font-weight:700;font-family:var(--mono);}
 
-/* ── KPIS ── */
+/* KPIS */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px;}
 @media(max-width:700px){.kpis{grid-template-columns:repeat(2,1fr);}}
 .kpi{background:var(--surface);border-radius:var(--radius);padding:18px 20px;border:1px solid var(--border);}
@@ -78,21 +63,11 @@ body{font-family:var(--font);background:var(--bg);color:var(--navy);min-height:1
 .kpi-val{font-size:32px;font-weight:700;line-height:1;color:var(--navy);}
 .kpi-val.green{color:var(--green);}
 .kpi-val.blue{color:var(--blue);}
+.kpi-val.amber{color:var(--amber);}
 .kpi-sub{font-size:11px;color:#cbd5e1;margin-top:5px;}
 
-/* ── VERTICAL SECTIONS ── */
-.vert-section{margin-bottom:24px;}
-.vert-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
-.vert-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
-.vert-pill.mva{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
-.vert-pill.rideshare{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
-.vert-dot{width:8px;height:8px;border-radius:50%;}
-.vert-dot.mva{background:#2563eb;}
-.vert-dot.rideshare{background:#16a34a;}
-.vert-count{font-size:12px;color:var(--slate);font-weight:400;}
-
-/* ── CARD ── */
-.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;}
+/* CARD */
+.card{background:var(--surface);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:22px;}
 .card-hdr{padding:14px 20px;border-bottom:1px solid #f1f5f9;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;background:#fafbfd;}
 .card-title{font-size:13px;font-weight:700;color:var(--navy);}
 .card-sub{font-size:11px;color:var(--slate);margin-top:2px;}
@@ -103,7 +78,18 @@ body{font-family:var(--font);background:var(--bg);color:var(--navy);min-height:1
 .export-btn{padding:6px 13px;background:var(--navy);color:#fff;border:none;border-radius:7px;font-size:12px;cursor:pointer;font-weight:600;font-family:var(--font);}
 .export-btn:hover{background:var(--blue);}
 
-/* ── TABLE ── */
+/* VERTICAL SECTIONS */
+.vert-section{margin-bottom:24px;}
+.vert-header{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.vert-pill{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.vert-pill.blue{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.vert-pill.green{background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;}
+.vert-dot{width:8px;height:8px;border-radius:50%;}
+.vert-dot.blue{background:#2563eb;}
+.vert-dot.green{background:#16a34a;}
+.vert-count{font-size:12px;color:var(--slate);font-weight:400;}
+
+/* TABLE */
 .tbl-wrap{overflow-x:auto;}
 table{width:100%;border-collapse:collapse;font-size:12.5px;}
 thead{background:#f8fafc;}
@@ -112,20 +98,19 @@ td{padding:11px 14px;border-bottom:1px solid #f8fafc;color:#374151;vertical-alig
 tbody tr:last-child td{border-bottom:none;}
 tbody tr:hover td{background:#fafbff;}
 
-/* ── BADGES ── */
+/* BADGES */
 .badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
 .b-forwarded{background:var(--green-lt);color:var(--green);}
 .b-rejected{background:var(--red-lt);color:var(--red);}
 .b-received{background:var(--blue-lt);color:#1d4ed8;}
 .b-pending{background:var(--amber-lt);color:var(--amber);}
 .b-disqualified{background:#f1f5f9;color:var(--slate);}
-.b-accepted{background:var(--green-lt);color:var(--green);}
 .b-contacting{background:#fef3c7;color:#92400e;}
 
-/* ── NOTES CELL ── */
+/* NOTES */
 .notes-cell{max-width:220px;font-size:11px;color:var(--slate);line-height:1.5;white-space:normal;}
 
-/* ── STATES ── */
+/* STATES */
 .st{padding:48px 20px;text-align:center;}
 .st-ico{font-size:32px;margin-bottom:10px;opacity:.35;}
 .st-t{font-size:13px;font-weight:600;color:var(--slate);margin-bottom:4px;}
@@ -143,11 +128,10 @@ tbody tr:hover td{background:#fafbff;}
     <div class="l-title">Publisher Portal</div>
     <div class="l-sub">Sign in to view your leads and conversions</div>
     <label class="l-label" for="pid">Your Publisher ID</label>
-    <input id="pid" class="l-input" type="text" placeholder="KRW-KANTHONY-2026" autocomplete="off" spellcheck="false"/>
+    <input id="pid" class="l-input" type="text" placeholder="KRW-XXXX-2026" autocomplete="off" spellcheck="false"/>
     <button id="lbtn" class="l-btn" onclick="doLogin()">Sign In</button>
     <div class="l-err" id="err"></div>
   </div>
-
 </div>
 
 <!-- PORTAL -->
@@ -159,13 +143,12 @@ tbody tr:hover td{background:#fafbff;}
       <span class="tb-user" id="tb-name">Dashboard</span>
     </div>
     <div class="tb-right">
-      <span class="tb-tag" id="tb-tag">Leads</span>
+      <span class="tb-tag">Leads</span>
       <button class="tb-signout" onclick="doLogout()">Sign Out</button>
     </div>
   </div>
 
   <div class="body">
-
     <!-- BANNER -->
     <div class="banner">
       <div>
@@ -189,11 +172,11 @@ tbody tr:hover td{background:#fafbff;}
       <div class="kpi"><div class="kpi-lbl">Total Leads</div><div class="kpi-val blue" id="k-total">—</div><div class="kpi-sub">all time</div></div>
       <div class="kpi"><div class="kpi-lbl">This Month</div><div class="kpi-val" id="k-month">—</div><div class="kpi-sub">last 30 days</div></div>
       <div class="kpi"><div class="kpi-lbl">Billable</div><div class="kpi-val green" id="k-billable">—</div><div class="kpi-sub">signed &amp; accepted</div></div>
-      <div class="kpi"><div class="kpi-lbl">Pending Review</div><div class="kpi-val" id="k-pending" style="color:#d97706">—</div><div class="kpi-sub">chase &amp; contacting</div></div>
+      <div class="kpi"><div class="kpi-lbl">Pending Review</div><div class="kpi-val amber" id="k-pending">—</div><div class="kpi-sub">chase &amp; contacting</div></div>
     </div>
 
-    <!-- GLOBAL FILTERS -->
-    <div class="card" style="margin-bottom:24px;">
+    <!-- FILTERS -->
+    <div class="card">
       <div class="card-hdr">
         <div>
           <div class="card-title">Lead Log</div>
@@ -206,13 +189,13 @@ tbody tr:hover td{background:#fafbff;}
             <option value="90">Last 90 days</option>
             <option value="9999">All Time</option>
           </select>
-          <select class="fsel" id="f-status" onchange="renderTables()">
+          <select class="fsel" id="f-status" onchange="renderSections()">
             <option value="">All Statuses</option>
             <option value="forwarded">Forwarded</option>
             <option value="buyer_rejected">Rejected</option>
             <option value="received">Received</option>
           </select>
-          <select class="fsel" id="f-sort" onchange="renderTables()">
+          <select class="fsel" id="f-sort" onchange="renderSections()">
             <option value="date_desc">Newest First</option>
             <option value="date_asc">Oldest First</option>
             <option value="billable">Billable First</option>
@@ -223,72 +206,21 @@ tbody tr:hover td{background:#fafbff;}
       </div>
     </div>
 
-    <!-- MVA SECTION -->
-    <div class="vert-section" id="section-mva">
-      <div class="vert-header">
-        <div class="vert-pill mva"><span class="vert-dot mva"></span>MVA — Motor Vehicle Accident</div>
-        <span class="vert-count" id="mva-count"></span>
-      </div>
-      <div class="card">
-        <div id="mva-load" class="st"><div class="spin"></div><div class="st-t">Loading MVA leads...</div></div>
-        <div id="mva-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No MVA leads found</div><div class="st-s">Leads will appear here once submitted</div></div>
-        <div id="mva-tbl-wrap" class="tbl-wrap" style="display:none">
-          <table>
-            <thead><tr>
-              <th>Date</th>
-              <th>CID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>State</th>
-              <th>Status</th>
-              <th>Billable</th>
-              <th>Notes</th>
-            </tr></thead>
-            <tbody id="mva-tbl"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- RIDESHARE SECTION -->
-    <div class="vert-section" id="section-rideshare">
-      <div class="vert-header">
-        <div class="vert-pill rideshare"><span class="vert-dot rideshare"></span>Rideshare — Uber &amp; Lyft</div>
-        <span class="vert-count" id="rs-count"></span>
-      </div>
-      <div class="card">
-        <div id="rs-load" class="st"><div class="spin"></div><div class="st-t">Loading Rideshare leads...</div></div>
-        <div id="rs-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No Rideshare leads found</div><div class="st-s">Leads will appear here once submitted</div></div>
-        <div id="rs-tbl-wrap" class="tbl-wrap" style="display:none">
-          <table>
-            <thead><tr>
-              <th>Date</th>
-              <th>CID</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>State</th>
-              <th>Status</th>
-              <th>Billable</th>
-              <th>Notes</th>
-            </tr></thead>
-            <tbody id="rs-tbl"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+    <!-- DYNAMIC VERTICAL SECTIONS — built by JS -->
+    <div id="sections-container"></div>
 
   </div>
 </div>
 
 <script>
-var API      = 'https://krw-backend-production.up.railway.app';
-var API_KEY  = '64tgzb5ostadx1azjio9crdlduw4vf29';
-var S        = null;
-var allLeads = [];
+var API     = 'https://krw-backend-production.up.railway.app';
+var API_KEY = '64tgzb5ostadx1azjio9crdlduw4vf29';
+var S       = null; // session: { portal_id, name, pub_ids, campaigns }
+var allLeadsByCampaign = {}; // keyed by campaign slug
 
 window.addEventListener('load', function(){
   try{
-    var raw = sessionStorage.getItem('krw_leads_sess');
+    var raw = sessionStorage.getItem('krw_leads_sess_v2');
     if(raw){ S = JSON.parse(raw); renderPortal(); }
   }catch(e){}
 });
@@ -305,15 +237,15 @@ async function doLogin(){
   if(!pid){ document.getElementById('pid').focus(); return; }
   btn.textContent = 'Signing in…'; btn.disabled = true;
   try{
-    var r  = await fetch(API+'/publishers/login',{
+    var r = await fetch(API+'/publishers/portal-config',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({pub_id: pid})
+      body: JSON.stringify({portal_id: pid})
     });
     var d = await r.json();
     if(d.ok){
-      S = {pub_id: d.pub_id, portal_id: pid, name: d.name, company: d.company||''};
-      sessionStorage.setItem('krw_leads_sess', JSON.stringify(S));
+      S = { portal_id: pid, name: d.name, pub_ids: d.pub_ids, campaigns: d.campaigns };
+      sessionStorage.setItem('krw_leads_sess_v2', JSON.stringify(S));
       renderPortal();
     } else {
       errEl.textContent = 'Publisher ID not found. Please check and try again.';
@@ -330,16 +262,54 @@ function renderPortal(){
   document.getElementById('login-screen').style.display  = 'none';
   document.getElementById('portal-screen').style.display = 'block';
   var first = (S.name||'').split(' ')[0] || S.portal_id;
-  document.getElementById('tb-name').textContent   = S.name || S.portal_id;
-  document.getElementById('wb-name').textContent   = 'Welcome back, '+first+'!';
-  document.getElementById('wb-sub').textContent    = (S.company ? S.company+' · ' : '')+'Portal ID: '+S.portal_id;
-  document.getElementById('chip-id').textContent   = S.portal_id;
+  document.getElementById('tb-name').textContent  = S.name || S.portal_id;
+  document.getElementById('wb-name').textContent  = 'Welcome back, '+first+'!';
+  document.getElementById('wb-sub').textContent   = 'Portal ID: '+S.portal_id;
+  document.getElementById('chip-id').textContent  = S.portal_id;
+  buildSections();
   loadLeads();
 }
 
+function buildSections(){
+  var container = document.getElementById('sections-container');
+  container.innerHTML = '';
+  (S.campaigns || []).forEach(function(camp, i){
+    var id = 'sect-'+i;
+    var div = document.createElement('div');
+    div.className = 'vert-section';
+    div.id = id;
+    div.innerHTML =
+      '<div class="vert-header">'+
+        '<div class="vert-pill '+camp.color+'">'+
+          '<span class="vert-dot '+camp.color+'"></span>'+
+          escHtml(camp.label)+
+        '</div>'+
+        '<span class="vert-count" id="'+id+'-count"></span>'+
+      '</div>'+
+      '<div class="card">'+
+        '<div id="'+id+'-load" class="st"><div class="spin"></div><div class="st-t">Loading...</div></div>'+
+        '<div id="'+id+'-empty" class="st" style="display:none">'+
+          '<div class="st-ico">📋</div>'+
+          '<div class="st-t">No '+escHtml(camp.label)+' leads found</div>'+
+          '<div class="st-s">Leads will appear here once submitted</div>'+
+        '</div>'+
+        '<div id="'+id+'-tbl-wrap" class="tbl-wrap" style="display:none">'+
+          '<table>'+
+            '<thead><tr>'+
+              '<th>Date</th><th>CID</th><th>Name</th><th>Email</th>'+
+              '<th>State</th><th>Status</th><th>Billable</th><th>Notes</th>'+
+            '</tr></thead>'+
+            '<tbody id="'+id+'-tbl"></tbody>'+
+          '</table>'+
+        '</div>'+
+      '</div>';
+    container.appendChild(div);
+  });
+}
+
 function doLogout(){
-  sessionStorage.removeItem('krw_leads_sess');
-  S = null;
+  sessionStorage.removeItem('krw_leads_sess_v2');
+  S = null; allLeadsByCampaign = {};
   document.getElementById('portal-screen').style.display = 'none';
   document.getElementById('login-screen').style.display  = '';
   document.getElementById('pid').value = '';
@@ -348,192 +318,130 @@ function doLogout(){
 async function loadLeads(){
   if(!S) return;
   var days = document.getElementById('f-days').value;
+  var daysParam = parseInt(days) >= 9999 ? 9999 : parseInt(days);
 
-  // Show loaders
-  ['mva','rs'].forEach(function(pfx){
-    show(pfx+'-load'); hide(pfx+'-empty'); hide(pfx+'-tbl-wrap');
+  // Show loaders for all sections
+  (S.campaigns||[]).forEach(function(c, i){
+    var id = 'sect-'+i;
+    show(id+'-load'); hide(id+'-empty'); hide(id+'-tbl-wrap');
   });
 
-  try{
-    var daysParam = parseInt(days) >= 9999 ? 9999 : parseInt(days);
-    // Fetch both campaigns in parallel using pub_id
-    var [mvaRes, rsRes] = await Promise.all([
-      fetch(API+'/leads/feed?pub='+encodeURIComponent(S.pub_id)+'&campaign=mva-nld2&days='+daysParam+'&limit=500',
-        {headers:{'x-api-key': API_KEY}}),
-      fetch(API+'/leads/feed?pub='+encodeURIComponent(S.pub_id)+'&campaign=rideshare-tb&days='+daysParam+'&limit=500',
-        {headers:{'x-api-key': API_KEY}})
-    ]);
+  // Fetch all campaigns in parallel
+  var fetches = (S.campaigns||[]).map(function(camp){
+    // Fetch for each pub_id that matches this campaign
+    var url = API+'/leads/feed?pub='+encodeURIComponent(S.portal_id)+
+              '&campaign='+encodeURIComponent(camp.slug)+
+              '&days='+daysParam+'&limit=500';
+    return fetch(url, {headers:{'x-api-key': API_KEY}})
+      .then(function(r){ return r.json(); })
+      .then(function(d){ return { slug: camp.slug, leads: d.leads || [] }; })
+      .catch(function(){ return { slug: camp.slug, leads: [] }; });
+  });
 
-    var mvaData = await mvaRes.json();
-    var rsData  = await rsRes.json();
+  var results = await Promise.all(fetches);
+  allLeadsByCampaign = {};
+  var allLeads = [];
+  results.forEach(function(r){
+    allLeadsByCampaign[r.slug] = r.leads;
+    allLeads = allLeads.concat(r.leads);
+  });
 
-    var mvaLeads = mvaData.leads || [];
-    var rsLeads  = rsData.leads  || [];
-    allLeads = mvaLeads.concat(rsLeads);
+  // KPIs
+  var month = new Date(Date.now()-30*86400000).toISOString();
+  document.getElementById('k-total').textContent    = allLeads.length;
+  document.getElementById('k-month').textContent    = allLeads.filter(function(l){ return (l.received_at||'')>=month; }).length;
+  document.getElementById('k-billable').textContent = allLeads.filter(function(l){ return isBillable(l); }).length;
+  document.getElementById('k-pending').textContent  = allLeads.filter(function(l){
+    var ns = (l.buyer_status||'').toLowerCase();
+    return ns.includes('chase')||ns.includes('contacting');
+  }).length;
 
-    // KPIs
-    var month = new Date(Date.now()-30*86400000).toISOString();
-    document.getElementById('k-total').textContent    = allLeads.length;
-    document.getElementById('k-month').textContent    = allLeads.filter(function(l){ return (l.received_at||'') >= month; }).length;
-    document.getElementById('k-billable').textContent = allLeads.filter(function(l){
-      var ns = (l.buyer_status||'').toLowerCase().trim();
-      return ns==='signed' || ns.startsWith('signed') || ns.includes('billable') || ns.includes('accepted');
-    }).length;
-    document.getElementById('k-pending').textContent  = allLeads.filter(function(l){
-      var ns = (l.buyer_status||'').toLowerCase().trim();
-      return ns.includes('chase') || ns.includes('contacting');
-    }).length;
+  document.getElementById('chip-updated').textContent = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 
-    document.getElementById('chip-updated').textContent = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
-
-    renderTables(mvaLeads, rsLeads);
-
-  } catch(e){
-    ['mva','rs'].forEach(function(pfx){ hide(pfx+'-load'); });
-    console.error('Load error:', e.message);
-  }
+  renderSections();
 }
 
-var _mvaLeads = [], _rsLeads = [];
-
-function renderTables(mva, rs){
-  if(mva !== undefined) _mvaLeads = mva;
-  if(rs  !== undefined) _rsLeads  = rs;
-
+function renderSections(){
+  if(!S) return;
   var statusFilter = document.getElementById('f-status').value;
   var sortMode     = document.getElementById('f-sort').value;
 
-  var filteredMVA = statusFilter ? _mvaLeads.filter(function(l){ return l.status===statusFilter; }) : _mvaLeads.slice();
-  var filteredRS  = statusFilter ? _rsLeads.filter(function(l){  return l.status===statusFilter; }) : _rsLeads.slice();
+  (S.campaigns||[]).forEach(function(camp, i){
+    var id    = 'sect-'+i;
+    var leads = (allLeadsByCampaign[camp.slug] || []).slice();
 
-  function isBillable(l){
-    var ns = (l.buyer_status||'').toLowerCase().trim();
-    return ns==='signed' || ns.startsWith('signed') || ns.includes('billable') || ns.includes('accepted');
-  }
+    if(statusFilter) leads = leads.filter(function(l){ return l.status===statusFilter; });
+    leads = sortLeads(leads, sortMode);
 
-  function sortLeads(arr){
-    if(sortMode === 'date_asc'){
-      return arr.sort(function(a,b){ return new Date(a.received_at)-new Date(b.received_at); });
+    hide(id+'-load');
+    document.getElementById(id+'-count').textContent = leads.length+' lead'+(leads.length!==1?'s':'');
+
+    if(!leads.length){
+      show(id+'-empty'); hide(id+'-tbl-wrap'); return;
     }
-    if(sortMode === 'billable'){
-      return arr.sort(function(a,b){
-        var ab = isBillable(a) ? 0 : 1;
-        var bb = isBillable(b) ? 0 : 1;
-        if(ab !== bb) return ab - bb;
-        return new Date(b.received_at) - new Date(a.received_at);
-      });
-    }
-    // default: date_desc — newest first
-    return arr.sort(function(a,b){ return new Date(b.received_at)-new Date(a.received_at); });
-  }
+    hide(id+'-empty'); show(id+'-tbl-wrap');
 
-  filteredMVA = sortLeads(filteredMVA);
-  filteredRS  = sortLeads(filteredRS);
+    var tbody = document.getElementById(id+'-tbl');
+    tbody.innerHTML = '';
+    leads.forEach(function(l){
+      var date    = formatDate(l.received_at);
+      var cid     = l.buyer_intake_id || '—';
+      var name    = [l.first_name, l.last_name].filter(Boolean).join(' ') || '—';
+      var email   = l.email || '—';
+      var state   = l.state || '—';
+      var bStatus = l.buyer_status || '';
+      var notes   = l.notes || '';
+      var displayS = bStatus || l.status || 'received';
+      var billable = isBillable(l) ? 'Yes' : (l.buyer_status && (l.buyer_status.toLowerCase().includes('disqualified')||l.buyer_status.toLowerCase().includes('rejected'))) ? 'No' : '—';
+      var billableColor = billable==='Yes'?'color:var(--green);font-weight:700':billable==='No'?'color:var(--red);font-weight:700':'color:var(--slate)';
 
-  renderVertTable('mva', filteredMVA,  'MVA');
-  renderVertTable('rs',  filteredRS,   'Rideshare');
+      var cidDisplay = cid!=='—'?'<span style="font-family:var(--mono);font-size:11px;color:#475569">'+escHtml(cid)+'</span>':'<span style="color:#cbd5e1">—</span>';
+      var notesDisplay = notes?'<div class="notes-cell">'+escHtml(notes.substring(0,120))+(notes.length>120?'…':'')+'</div>':'<span style="color:#cbd5e1;font-size:11px">—</span>';
+
+      var tr = document.createElement('tr');
+      tr.innerHTML =
+        '<td style="color:var(--slate);font-size:11px;white-space:nowrap">'+date+'</td>'+
+        '<td>'+cidDisplay+'</td>'+
+        '<td style="font-weight:500;white-space:nowrap">'+escHtml(name)+'</td>'+
+        '<td style="font-size:11px;color:var(--slate)">'+escHtml(email)+'</td>'+
+        '<td style="font-size:12px">'+escHtml(state)+'</td>'+
+        '<td>'+displayStatusBadge(displayS)+'</td>'+
+        '<td style="'+billableColor+';font-size:12px">'+billable+'</td>'+
+        '<td>'+notesDisplay+'</td>';
+      tbody.appendChild(tr);
+    });
+  });
 }
 
-function renderVertTable(pfx, leads, label){
-  var countEl = document.getElementById(pfx === 'mva' ? 'mva-count' : 'rs-count');
-  if(countEl) countEl.textContent = leads.length + ' lead' + (leads.length!==1?'s':'');
+function isBillable(l){
+  var ns = (l.buyer_status||'').toLowerCase().trim();
+  return ns==='signed'||ns.startsWith('signed')||ns.includes('billable')||ns.includes('accepted');
+}
 
-  hide(pfx+'-load');
-
-  if(!leads.length){
-    show(pfx+'-empty');
-    hide(pfx+'-tbl-wrap');
-    return;
-  }
-  hide(pfx+'-empty');
-  show(pfx+'-tbl-wrap');
-
-  var tbody = document.getElementById(pfx+'-tbl');
-  tbody.innerHTML = '';
-
-  leads.forEach(function(l){
-    var date      = formatDate(l.received_at);
-    var cid       = l.buyer_intake_id || '—';
-    var name      = [l.first_name, l.last_name].filter(Boolean).join(' ') || '—';
-    var email     = l.email || '—';
-    var state     = l.state || '—';
-    var nldStatus = l.buyer_status || '';
-    var notes     = l.notes || '';
-    var status    = l.status || 'received';
-
-    // Use buyer_status for display (hides internal NLD label from publisher)
-    var displayStatus = nldStatus || status;
-    var nldLow = displayStatus.toLowerCase();
-
-    // Billable derived from status
-    var billable = (nldLow==='signed' || nldLow.startsWith('signed') || nldLow.includes('billable') || nldLow.includes('accepted')) ? 'Yes'
-                 : nldLow.includes('disqualified') || nldLow.includes('rejected') ? 'No'
-                 : '—';
-    var billableColor = billable==='Yes' ? 'color:var(--green);font-weight:700'
-                      : billable==='No'  ? 'color:var(--red);font-weight:700'
-                      : 'color:var(--slate)';
-
-    // Status badge — green for Signed, standard colors otherwise
-    var statusBadgeHtml = displayStatusBadge(displayStatus);
-
-    var cidDisplay = cid !== '—'
-      ? '<span style="font-family:var(--mono);font-size:11px;color:#475569">'+escHtml(cid)+'</span>'
-      : '<span style="color:#cbd5e1">—</span>';
-
-    var notesDisplay = notes
-      ? '<div class="notes-cell">'+escHtml(notes.substring(0,120))+(notes.length>120?'…':'')+'</div>'
-      : '<span style="color:#cbd5e1;font-size:11px">—</span>';
-
-    var tr = document.createElement('tr');
-    tr.innerHTML =
-      '<td style="color:var(--slate);font-size:11px;white-space:nowrap">'+date+'</td>'+
-      '<td>'+cidDisplay+'</td>'+
-      '<td style="font-weight:500;white-space:nowrap">'+escHtml(name)+'</td>'+
-      '<td style="font-size:11px;color:var(--slate)">'+escHtml(email)+'</td>'+
-      '<td style="font-size:12px">'+escHtml(state)+'</td>'+
-      '<td>'+statusBadgeHtml+'</td>'+
-      '<td style="'+billableColor+';font-size:12px">'+billable+'</td>'+
-      '<td>'+notesDisplay+'</td>';
-    tbody.appendChild(tr);
+function sortLeads(arr, mode){
+  if(mode==='date_asc') return arr.sort(function(a,b){ return new Date(a.received_at)-new Date(b.received_at); });
+  if(mode==='billable') return arr.sort(function(a,b){
+    var ab=isBillable(a)?0:1, bb=isBillable(b)?0:1;
+    if(ab!==bb) return ab-bb;
+    return new Date(b.received_at)-new Date(a.received_at);
   });
+  return arr.sort(function(a,b){ return new Date(b.received_at)-new Date(a.received_at); });
 }
 
 function displayStatusBadge(s){
   if(!s) return '<span style="color:#cbd5e1;font-size:11px">—</span>';
   var low = s.toLowerCase().trim();
-  // Signed / Accepted / Billable → green with checkmark
-  if(low==='signed' || low.startsWith('signed') || low.includes('accepted') || low.includes('billable')){
+  if(low==='signed'||low.startsWith('signed')||low.includes('accepted')||low.includes('billable'))
     return '<span class="badge b-forwarded">✓ '+escHtml(s)+'</span>';
-  }
-  if(low.includes('disqualified') || low.includes('rejected')){
+  if(low.includes('disqualified')||low.includes('rejected'))
     return '<span class="badge b-rejected">✗ '+escHtml(s)+'</span>';
-  }
-  if(low.includes('contacting') || low.includes('chase')){
+  if(low.includes('contacting')||low.includes('chase'))
     return '<span class="badge b-contacting">'+escHtml(s)+'</span>';
-  }
-  if(low.includes('duplicate')){
+  if(low.includes('duplicate'))
     return '<span class="badge b-disqualified">'+escHtml(s)+'</span>';
-  }
-  // forwarded system status → green
-  if(low==='forwarded'){
-    return '<span class="badge b-forwarded">✓ Forwarded</span>';
-  }
+  if(low==='forwarded') return '<span class="badge b-forwarded">✓ Forwarded</span>';
   return '<span class="badge b-pending">'+escHtml(s)+'</span>';
 }
-
-function statusBadge(status){
-  var map = {
-    'forwarded':      ['b-forwarded','✓ Forwarded'],
-    'buyer_rejected': ['b-rejected','✗ Rejected'],
-    'received':       ['b-received','● Received'],
-    'duplicate':      ['b-disqualified','Duplicate'],
-    'error':          ['b-rejected','Error'],
-  };
-  var m = map[status] || ['b-pending', status];
-  return '<span class="badge '+m[0]+'">'+m[1]+'</span>';
-}
-
-
 
 function formatDate(iso){
   if(!iso) return '—';
@@ -550,22 +458,16 @@ function show(id){ var e=document.getElementById(id); if(e) e.style.display=''; 
 function hide(id){ var e=document.getElementById(id); if(e) e.style.display='none'; }
 
 function exportCSV(){
+  var allLeads = Object.values(allLeadsByCampaign).reduce(function(a,b){ return a.concat(b); },[]);
   if(!allLeads.length){ alert('No leads to export'); return; }
   var headers = ['Date','CID','First Name','Last Name','Email','State','Campaign','Status','Billable','Notes'];
   var rows = allLeads.map(function(l){
-    var nldLow = (l.buyer_status||'').toLowerCase();
-    var billable = nldLow.includes('billable')||nldLow.includes('accepted')||nldLow.includes('signed') ? 'Yes'
-                 : nldLow.includes('disqualified')||nldLow.includes('rejected') ? 'No' : '';
     return [
       (l.received_at||'').split('T')[0],
       l.buyer_intake_id||'',
-      l.first_name||'',
-      l.last_name||'',
-      l.email||'',
-      l.state||'',
-      l.campaign||'',
-      l.status||'',
-      billable,
+      l.first_name||'', l.last_name||'',
+      l.email||'', l.state||'', l.campaign||'', l.status||'',
+      isBillable(l)?'Yes':'',
       l.notes||''
     ].map(function(v){ return '"'+(String(v).replace(/"/g,'""'))+'"'; }).join(',');
   });
