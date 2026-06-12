@@ -326,16 +326,28 @@ async function loadLeads(){
     show(id+'-load'); hide(id+'-empty'); hide(id+'-tbl-wrap');
   });
 
-  // Fetch all campaigns in parallel
+  // Fetch all campaigns in parallel — one fetch per pub_id per campaign, then merge
   var fetches = (S.campaigns||[]).map(function(camp){
-    // Fetch for each pub_id that matches this campaign
-    var url = API+'/leads/feed?pub='+encodeURIComponent(S.portal_id)+
-              '&campaign='+encodeURIComponent(camp.slug)+
-              '&days='+daysParam+'&limit=500';
-    return fetch(url, {headers:{'x-api-key': API_KEY}})
-      .then(function(r){ return r.json(); })
-      .then(function(d){ return { slug: camp.slug, leads: d.leads || [] }; })
-      .catch(function(){ return { slug: camp.slug, leads: [] }; });
+    var pubIds = S.pub_ids && S.pub_ids.length ? S.pub_ids : [S.portal_id];
+    var allPubFetches = pubIds.map(function(pubId){
+      var url = API+'/leads/feed?pub='+encodeURIComponent(pubId)+
+                '&campaign='+encodeURIComponent(camp.slug)+
+                '&days='+daysParam+'&limit=500';
+      return fetch(url, {headers:{'x-api-key': API_KEY}})
+        .then(function(r){ return r.json(); })
+        .then(function(d){ return d.leads || []; })
+        .catch(function(){ return []; });
+    });
+    return Promise.all(allPubFetches).then(function(arrays){
+      // Merge and deduplicate by lead id
+      var seen = {}, merged = [];
+      arrays.forEach(function(arr){
+        arr.forEach(function(l){
+          if(!seen[l.id]){ seen[l.id]=true; merged.push(l); }
+        });
+      });
+      return { slug: camp.slug, leads: merged };
+    });
   });
 
   var results = await Promise.all(fetches);
