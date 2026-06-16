@@ -296,7 +296,7 @@ function buildSections(){
         '<div id="'+id+'-tbl-wrap" class="tbl-wrap" style="display:none">'+
           '<table>'+
             '<thead><tr>'+
-              '<th>Date</th><th>CID</th><th>Name</th><th>Email</th>'+
+              '<th>Date</th><th>Phone</th><th>Name</th><th>Email</th>'+
               '<th>State</th><th>Status</th><th>Billable</th><th>Notes</th>'+
             '</tr></thead>'+
             '<tbody id="'+id+'-tbl"></tbody>'+
@@ -384,14 +384,16 @@ function renderSections(){
     tbody.innerHTML = '';
     leads.forEach(function(l){
       var date    = formatDate(l.received_at);
-      var cid     = l.buyer_intake_id || '—';
+      // Always show phone number in the CID column
+      var cid     = l.phone || '—';
       var name    = [l.first_name, l.last_name].filter(Boolean).join(' ') || '—';
       var email   = l.email || '—';
       var state   = l.state || '—';
       var bStatus = l.buyer_status || '';
       var notes   = l.notes || '';
+      // Prefer buyer_status (from sheet) over system status for display
       var displayS = bStatus || l.status || 'received';
-      var billable = isBillable(l) ? 'Yes' : (l.buyer_status && (l.buyer_status.toLowerCase().includes('disqualified')||l.buyer_status.toLowerCase().includes('rejected'))) ? 'No' : '—';
+      var billable = isBillable(l) ? 'Yes' : (bStatus && (bStatus.toLowerCase().includes('disqualified')||bStatus.toLowerCase().includes('rejected'))) ? 'No' : '—';
       var billableColor = billable==='Yes'?'color:var(--green);font-weight:700':billable==='No'?'color:var(--red);font-weight:700':'color:var(--slate)';
 
       var cidDisplay = cid!=='—'?'<span style="font-family:var(--mono);font-size:11px;color:#475569">'+escHtml(cid)+'</span>':'<span style="color:#cbd5e1">—</span>';
