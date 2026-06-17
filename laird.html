@@ -415,6 +415,12 @@ function renderSections(){
 }
 
 function isBillable(l){
+  // If billable has been explicitly set (true/false), that's authoritative —
+  // this is the manual admin-controlled flag for MVA and other campaigns
+  // pending buyer billable postbacks.
+  if (l.billable === true)  return true;
+  if (l.billable === false) return false;
+  // Fallback for campaigns without manual billable tracking yet
   var ns = (l.buyer_status||'').toLowerCase().trim();
   return ns==='signed'||ns.startsWith('signed')||ns.includes('billable')||ns.includes('accepted');
 }
