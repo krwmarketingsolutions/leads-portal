@@ -252,7 +252,8 @@ function doLogin(){
   .then(function(r){return r.json();})
   .then(function(d){
     if(d.ok){
-      S={pub_id:d.pub_id||pid,name:d.name||pid,campaign:d.campaign||'MVA',did:d.did||null};
+      var camp = d.campaign || (d.campaigns&&d.campaigns.length?d.campaigns[0].campaign:'mva-funnel');
+      S={pub_id:d.pub_id||pid, portal_id:d.portal_id||pid, name:d.name||pid, campaign:camp, did:d.did||null};
     } else {
       errEl.textContent='Publisher ID not found. Please check and try again.';
       errEl.style.display=''; btn.textContent='Sign In'; btn.disabled=false; return;
@@ -260,7 +261,7 @@ function doLogin(){
     sessionStorage.setItem('krw_sess',JSON.stringify(S)); showPortal();
   })
   .catch(function(){
-    S={pub_id:pid,name:pid,campaign:'MVA',did:null};
+    S={pub_id:pid, portal_id:pid, name:pid, campaign:'mva-funnel', did:null};
     sessionStorage.setItem('krw_sess',JSON.stringify(S)); showPortal();
   })
   .finally(function(){ btn.textContent='Sign In'; btn.disabled=false; });
@@ -304,7 +305,7 @@ function loadCalls(){
   var isCallsCampaign = (S.campaign||'').toLowerCase() === 'ssdi';
   var url = isCallsCampaign
     ? API+'/calls/feed?pub='+encodeURIComponent(S.pub_id)+'&days='+days+'&api_key='+API_KEY
-    : API+'/leads/feed?portal_id='+encodeURIComponent(S.pub_id)+'&days='+days+'&api_key='+API_KEY;
+    : API+'/leads/feed?portal_id='+encodeURIComponent(S.portal_id||S.pub_id)+'&days='+days+'&api_key='+API_KEY;
 
   fetch(url)
   .then(function(r){return r.json();})
