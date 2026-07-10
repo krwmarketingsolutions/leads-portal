@@ -214,17 +214,20 @@ function buyerBadge(buyerStatus, updatedAt) {
   if (!buyerStatus) return '<span style="color:#d1d5db;font-size:12px">—</span>';
   var s = buyerStatus.toLowerCase().trim();
   var cls = 'bs-default';
-  if (s==='accepted'||s==='billable'||s==='signed') cls='bs-accepted';
+  var label = buyerStatus;
+  // "Accepted" from buyer just means received — show as Pending until disposition changes
+  if (s==='accepted') { cls='bs-pending'; label='Pending'; }
   else if (s==='queued') cls='bs-queued';
   else if (s==='pending') cls='bs-pending';
   else if (s==='rejected'||s==='disqualified'||s==='dnq') cls='bs-rejected';
   else if (s==='returned') cls='bs-returned';
   else if (s==='duplicate') cls='bs-duplicate';
+  else if (s==='cpa'||s==='retained'||s==='signed') { cls='bs-accepted'; label='CPA'; }
 
   var updated = updatedAt
     ? '<div class="updated-tag">Updated ' + timeAgo(updatedAt) + '</div>'
     : '';
-  return '<div><span class="badge '+cls+'">'+buyerStatus+'</span>'+updated+'</div>';
+  return '<div><span class="badge '+cls+'">'+label+'</span>'+updated+'</div>';
 }
 
 function timeAgo(isoStr) {
