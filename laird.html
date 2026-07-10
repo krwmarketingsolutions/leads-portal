@@ -300,13 +300,17 @@ function loadCalls(){
   document.getElementById('st-err').style.display='none';
   document.getElementById('tbl-wrap').style.display='none';
 
-  var url=API+'/calls/feed?pub='+encodeURIComponent(S.pub_id)+'&days='+days+'&api_key='+API_KEY;
+  // Use leads/feed for lead-based campaigns, calls/feed for call-based
+  var isCallsCampaign = (S.campaign||'').toLowerCase() === 'ssdi';
+  var url = isCallsCampaign
+    ? API+'/calls/feed?pub='+encodeURIComponent(S.pub_id)+'&days='+days+'&api_key='+API_KEY
+    : API+'/leads/feed?portal_id='+encodeURIComponent(S.pub_id)+'&days='+days+'&api_key='+API_KEY;
 
   fetch(url)
   .then(function(r){return r.json();})
   .then(function(d){
     if(!d.ok) throw new Error(d.error||'Server error');
-    var allCalls=d.calls||[];
+    var allCalls=d.leads||d.calls||[];
 
     var calls=allCalls.slice();
     if(period==='current_week'){var wb=getWeekBounds(0); calls=calls.filter(function(c){var t=new Date(c.call_date||c.received_at||0);return t>=wb.start&&t<=wb.end;});}
@@ -319,8 +323,8 @@ function loadCalls(){
     // KPIs
     var yest2=new Date();yest2.setDate(yest2.getDate()-1);var ys2=yest2.toISOString().split('T')[0];
     var wkAgo=new Date();wkAgo.setDate(wkAgo.getDate()-7);var wks=wkAgo.toISOString().split('T')[0];
-    document.getElementById('k-yesterday').textContent=allCalls.filter(function(c){return String(c.call_date||'').startsWith(ys2);}).length;
-    document.getElementById('k-week').textContent=allCalls.filter(function(c){return(c.call_date||'')>=wks;}).length;
+    document.getElementById('k-yesterday').textContent=allCalls.filter(function(c){var d=c.received_at||c.call_date||'';return String(d).startsWith(ys2);}).length;
+    document.getElementById('k-week').textContent=allCalls.filter(function(c){var d=(c.received_at||c.call_date||'').split('T')[0];return d>=wks;}).length;
     document.getElementById('k-bill').textContent=allCalls.filter(function(c){return c.billable;}).length;
     document.getElementById('k-pay').textContent='$'+allCalls.reduce(function(s,c){return s+parseFloat(c.payout_amount||0);},0).toFixed(2);
 
@@ -347,8 +351,10 @@ function loadCalls(){
         if(c.raw && c.raw.ea_postback && c.raw.ea_postback.synced_at) buyerUpdatedAt = c.raw.ea_postback.synced_at;
       } catch(e){}
 
-      var name=(c.caller_name||(c.first_name&&c.last_name?(c.first_name+' '+c.last_name):null)||'—');
+      var name=(c.caller_name||(c.first_name||c.last_name?(((c.first_name||'')+' '+(c.last_name||'')).trim()):null)||'—');
       var phone=c.caller_id||c.phone||'—';
+      var state=c.state||'—';
+      var sysStatus=c.status||c.call_status_label||'received';
       var pay=c.payout_amount&&parseFloat(c.payout_amount)>0?'<span style="font-weight:700;color:#15803d">$'+parseFloat(c.payout_amount).toFixed(2)+'</span>':'<span style="color:#d1d5db">—</span>';
       var notes=c.notes||c.buyer_error||'';
 
@@ -357,8 +363,8 @@ function loadCalls(){
         '<td>'+date+'</td>'+
         '<td style="font-weight:500">'+escH(name)+'</td>'+
         '<td style="font-family:monospace;font-size:12px;color:#6b7280">'+escH(phone)+'</td>'+
-        '<td style="font-size:12px">'+escH(c.state||'—')+'</td>'+
-        '<td>'+submittedBadge(c.status||c.call_status_label)+'</td>'+
+        '<td style="font-size:12px">'+escH(state)+'</td>'+
+        '<td>'+submittedBadge(sysStatus)+'</td>'+
         '<td>'+buyerBadge(c.buyer_status, buyerUpdatedAt)+'</td>'+
         '<td style="font-size:11px;color:#6b7280;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+escH(notes)+'">'+escH(notes||'—')+'</td>'+
         '<td>'+pay+'</td>';
