@@ -253,7 +253,8 @@ function doLogin(){
   .then(function(d){
     if(d.ok){
       var camp = d.campaign || (d.campaigns&&d.campaigns.length?d.campaigns[0].campaign:'mva-funnel');
-      S={pub_id:d.pub_id||pid, portal_id:d.portal_id||pid, name:d.name||pid, campaign:camp, did:d.did||null};
+      // portal_id is always what the publisher typed to log in
+      S={pub_id:d.pub_id||pid, portal_id:pid, name:d.name||pid, campaign:camp, did:d.did||null};
     } else {
       errEl.textContent='Publisher ID not found. Please check and try again.';
       errEl.style.display=''; btn.textContent='Sign In'; btn.disabled=false; return;
@@ -274,7 +275,7 @@ function showPortal(){
   document.getElementById('tb-name').textContent=S.name+' — Dashboard';
   document.getElementById('tb-camp').textContent=(S.campaign||'MVA').toUpperCase();
   document.getElementById('wb-name').textContent='Welcome back, '+first+'!';
-  document.getElementById('wb-id').textContent='Publisher ID: '+S.pub_id;
+  document.getElementById('wb-id').textContent='Portal ID: '+S.portal_id;
   if(S.did){
     var fmt=String(S.did).replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3');
     document.getElementById('did-num').textContent=fmt||S.did;
