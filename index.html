@@ -214,20 +214,17 @@ function buyerBadge(buyerStatus, updatedAt) {
   if (!buyerStatus) return '<span style="color:#d1d5db;font-size:12px">—</span>';
   var s = buyerStatus.toLowerCase().trim();
   var cls = 'bs-default';
-  var label = buyerStatus;
-  // "Accepted" from buyer just means received — show as Pending until disposition changes
-  if (s==='accepted') { cls='bs-pending'; label='Pending'; }
+  if (s==='accepted'||s==='billable'||s==='signed') cls='bs-accepted';
   else if (s==='queued') cls='bs-queued';
   else if (s==='pending') cls='bs-pending';
   else if (s==='rejected'||s==='disqualified'||s==='dnq') cls='bs-rejected';
   else if (s==='returned') cls='bs-returned';
   else if (s==='duplicate') cls='bs-duplicate';
-  else if (s==='cpa'||s==='retained'||s==='signed') { cls='bs-accepted'; label='CPA'; }
 
   var updated = updatedAt
     ? '<div class="updated-tag">Updated ' + timeAgo(updatedAt) + '</div>'
     : '';
-  return '<div><span class="badge '+cls+'">'+label+'</span>'+updated+'</div>';
+  return '<div><span class="badge '+cls+'">'+buyerStatus+'</span>'+updated+'</div>';
 }
 
 function timeAgo(isoStr) {
@@ -256,8 +253,7 @@ function doLogin(){
   .then(function(d){
     if(d.ok){
       var camp = d.campaign || (d.campaigns&&d.campaigns.length?d.campaigns[0].campaign:'mva-funnel');
-      // portal_id is always what the publisher typed to log in
-      S={pub_id:d.pub_id||pid, portal_id:pid, name:d.name||pid, campaign:camp, did:d.did||null};
+      S={pub_id:d.pub_id||pid, portal_id:d.portal_id||pid, name:d.name||pid, campaign:camp, did:d.did||null};
     } else {
       errEl.textContent='Publisher ID not found. Please check and try again.';
       errEl.style.display=''; btn.textContent='Sign In'; btn.disabled=false; return;
@@ -278,7 +274,7 @@ function showPortal(){
   document.getElementById('tb-name').textContent=S.name+' — Dashboard';
   document.getElementById('tb-camp').textContent=(S.campaign||'MVA').toUpperCase();
   document.getElementById('wb-name').textContent='Welcome back, '+first+'!';
-  document.getElementById('wb-id').textContent='Portal ID: '+S.portal_id;
+  document.getElementById('wb-id').textContent='Publisher ID: '+S.pub_id;
   if(S.did){
     var fmt=String(S.did).replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3');
     document.getElementById('did-num').textContent=fmt||S.did;
