@@ -42,7 +42,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .did-box .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.65;margin-bottom:5px;}
 .did-box .num{font-size:17px;font-weight:700;font-family:monospace;letter-spacing:.04em;}
 
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:22px;}
 @media(max-width:660px){.kpis{grid-template-columns:repeat(2,1fr);}}
 .kpi{background:#fff;border-radius:12px;padding:18px 20px;border:1px solid #e9ecef;box-shadow:0 1px 3px rgba(0,0,0,.05);}
 .kpi .lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#9ca3af;margin-bottom:7px;}
@@ -111,7 +111,7 @@ tbody tr:hover td{background:#fafafa;}
 <div id="portal-screen">
   <div class="topbar">
     <div class="topbar-left">
-      <span class="topbar-co">KRW Marketing</span>
+      <span class="topbar-co" id="tb-co">KRW Marketing</span>
       <span class="topbar-pipe">|</span>
       <span class="topbar-user" id="tb-name">Dashboard</span>
     </div>
@@ -136,8 +136,10 @@ tbody tr:hover td{background:#fafafa;}
     <div class="kpis">
       <div class="kpi"><div class="lbl">Yesterday</div><div class="val v-blue" id="k-yesterday">—</div><div class="sub">leads yesterday</div></div>
       <div class="kpi"><div class="lbl">This Week</div><div class="val v-dark" id="k-week">—</div><div class="sub">last 7 days</div></div>
-      <div class="kpi"><div class="lbl">Billable</div><div class="val v-green" id="k-bill">—</div><div class="sub">confirmed CPAs</div></div>
-      <div class="kpi"><div class="lbl">Total Payout</div><div class="val v-green" id="k-pay">—</div><div class="sub">billable only</div></div>
+      <div class="kpi"><div class="lbl">Pending</div><div class="val" style="color:#a16207" id="k-pending">—</div><div class="sub" id="k-pending-sub">in review</div></div>
+      <div class="kpi"><div class="lbl">Queued</div><div class="val" style="color:#1d4ed8" id="k-queued">—</div><div class="sub" id="k-queued-sub">looking promising</div></div>
+      <div class="kpi"><div class="lbl">Billable</div><div class="val v-green" id="k-bill">—</div><div class="sub" id="k-bill-sub">confirmed CPAs</div></div>
+      <div class="kpi"><div class="lbl">Total Payout</div><div class="val v-green" id="k-pay">—</div><div class="sub" id="k-pay-sub">billable only</div></div>
     </div>
 
     <div class="card">
@@ -214,17 +216,20 @@ function buyerBadge(buyerStatus, updatedAt) {
   if (!buyerStatus) return '<span style="color:#d1d5db;font-size:12px">—</span>';
   var s = buyerStatus.toLowerCase().trim();
   var cls = 'bs-default';
-  if (s==='accepted'||s==='billable'||s==='signed') cls='bs-accepted';
+  var label = buyerStatus;
+  // "Accepted" from buyer just means received — show as Pending until disposition changes
+  if (s==='accepted') { cls='bs-pending'; label='Pending'; }
   else if (s==='queued') cls='bs-queued';
   else if (s==='pending') cls='bs-pending';
   else if (s==='rejected'||s==='disqualified'||s==='dnq') cls='bs-rejected';
   else if (s==='returned') cls='bs-returned';
   else if (s==='duplicate') cls='bs-duplicate';
+  else if (s==='cpa'||s==='retained'||s==='signed') { cls='bs-accepted'; label='CPA'; }
 
   var updated = updatedAt
     ? '<div class="updated-tag">Updated ' + timeAgo(updatedAt) + '</div>'
     : '';
-  return '<div><span class="badge '+cls+'">'+buyerStatus+'</span>'+updated+'</div>';
+  return '<div><span class="badge '+cls+'">'+label+'</span>'+updated+'</div>';
 }
 
 function timeAgo(isoStr) {
@@ -253,7 +258,7 @@ function doLogin(){
   .then(function(d){
     if(d.ok){
       var camp = d.campaign || (d.campaigns&&d.campaigns.length?d.campaigns[0].campaign:'mva-funnel');
-      S={pub_id:d.pub_id||pid, portal_id:d.portal_id||pid, name:d.name||pid, campaign:camp, did:d.did||null};
+      S={pub_id:d.pub_id||pid, portal_id:pid, name:d.name||pid, company:d.company||'KRW Marketing', campaign:camp, did:d.did||null};
     } else {
       errEl.textContent='Publisher ID not found. Please check and try again.';
       errEl.style.display=''; btn.textContent='Sign In'; btn.disabled=false; return;
@@ -261,7 +266,7 @@ function doLogin(){
     sessionStorage.setItem('krw_sess',JSON.stringify(S)); showPortal();
   })
   .catch(function(){
-    S={pub_id:pid, portal_id:pid, name:pid, campaign:'mva-funnel', did:null};
+    S={pub_id:pid, portal_id:pid, name:pid, company:'KRW Marketing', campaign:'mva-funnel', did:null};
     sessionStorage.setItem('krw_sess',JSON.stringify(S)); showPortal();
   })
   .finally(function(){ btn.textContent='Sign In'; btn.disabled=false; });
@@ -271,10 +276,11 @@ function showPortal(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('portal-screen').style.display='block';
   var first=(S.name||'').split(' ')[0]||S.pub_id;
+  document.getElementById('tb-co').textContent = S.company || 'KRW Marketing';
   document.getElementById('tb-name').textContent=S.name+' — Dashboard';
   document.getElementById('tb-camp').textContent=(S.campaign||'MVA').toUpperCase();
   document.getElementById('wb-name').textContent='Welcome back, '+first+'!';
-  document.getElementById('wb-id').textContent='Publisher ID: '+S.pub_id;
+  document.getElementById('wb-id').textContent='Portal ID: '+(S.portal_id||S.pub_id);
   if(S.did){
     var fmt=String(S.did).replace(/(\d{3})(\d{3})(\d{4})/,'($1) $2-$3');
     document.getElementById('did-num').textContent=fmt||S.did;
@@ -326,8 +332,19 @@ function loadCalls(){
     var wkAgo=new Date();wkAgo.setDate(wkAgo.getDate()-7);var wks=wkAgo.toISOString().split('T')[0];
     document.getElementById('k-yesterday').textContent=allCalls.filter(function(c){var d=c.received_at||c.call_date||'';return String(d).startsWith(ys2);}).length;
     document.getElementById('k-week').textContent=allCalls.filter(function(c){var d=(c.received_at||c.call_date||'').split('T')[0];return d>=wks;}).length;
-    document.getElementById('k-bill').textContent=allCalls.filter(function(c){return c.billable;}).length;
-    document.getElementById('k-pay').textContent='$'+allCalls.reduce(function(s,c){return s+parseFloat(c.payout_amount||0);},0).toFixed(2);
+    // Pending and Queued — separate counts
+    var filteredPending = calls.filter(function(c){ return (c.buyer_status||'').toLowerCase()==='pending'; });
+    var filteredQueued  = calls.filter(function(c){ return (c.buyer_status||'').toLowerCase()==='queued'; });
+    document.getElementById('k-pending').textContent  = filteredPending.length;
+    document.getElementById('k-pending-sub').textContent = label;
+    document.getElementById('k-queued').textContent   = filteredQueued.length;
+    document.getElementById('k-queued-sub').textContent  = label;
+    // Billable and payout reflect the ACTIVE FILTER
+    var filteredBillable = calls.filter(function(c){ return c.billable; });
+    document.getElementById('k-bill').textContent     = filteredBillable.length;
+    document.getElementById('k-bill-sub').textContent = label;
+    document.getElementById('k-pay').textContent      = '$' + filteredBillable.reduce(function(s,c){ return s + parseFloat(c.payout_amount||0); }, 0).toFixed(2);
+    document.getElementById('k-pay-sub').textContent  = label;
 
     document.getElementById('st-load').style.display='none';
     if(!calls.length){document.getElementById('st-empty').style.display='';return;}
