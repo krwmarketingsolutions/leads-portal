@@ -133,23 +133,27 @@ tbody tr:hover td{background:#fafafa;}
       </div>
     </div>
 
+    <div style="margin-bottom:10px;padding:0 2px">
+      <div style="font-size:15px;font-weight:700;color:#0f1c3f">MVA — CPA Campaign</div>
+      <div style="font-size:12px;color:#9ca3af;margin-top:2px">Paid on signed retainer</div>
+    </div>
     <div class="kpis">
-      <div class="kpi"><div class="lbl">Yesterday</div><div class="val v-blue" id="k-yesterday">—</div><div class="sub">leads yesterday</div></div>
-      <div class="kpi"><div class="lbl">This Week</div><div class="val v-dark" id="k-week">—</div><div class="sub">last 7 days</div></div>
-      <div class="kpi"><div class="lbl">Pending</div><div class="val" style="color:#a16207" id="k-pending">—</div><div class="sub" id="k-pending-sub">in review</div></div>
-      <div class="kpi"><div class="lbl">Queued</div><div class="val" style="color:#1d4ed8" id="k-queued">—</div><div class="sub" id="k-queued-sub">looking promising</div></div>
-      <div class="kpi"><div class="lbl">Billable</div><div class="val v-green" id="k-bill">—</div><div class="sub" id="k-bill-sub">confirmed CPAs</div></div>
-      <div class="kpi"><div class="lbl">Total Payout</div><div class="val v-green" id="k-pay">—</div><div class="sub" id="k-pay-sub">billable only</div></div>
+      <div class="kpi"><div class="lbl">Yesterday</div><div class="val v-blue" id="cpa-k-yesterday">—</div><div class="sub">leads yesterday</div></div>
+      <div class="kpi"><div class="lbl">This Week</div><div class="val v-dark" id="cpa-k-week">—</div><div class="sub">last 7 days</div></div>
+      <div class="kpi"><div class="lbl">Pending</div><div class="val" style="color:#a16207" id="cpa-k-pending">—</div><div class="sub" id="cpa-k-pending-sub">in review</div></div>
+      <div class="kpi"><div class="lbl">Queued</div><div class="val" style="color:#1d4ed8" id="cpa-k-queued">—</div><div class="sub" id="cpa-k-queued-sub">looking promising</div></div>
+      <div class="kpi"><div class="lbl">Billable</div><div class="val v-green" id="cpa-k-bill">—</div><div class="sub" id="cpa-k-bill-sub">confirmed CPAs</div></div>
+      <div class="kpi"><div class="lbl">Total Payout</div><div class="val v-green" id="cpa-k-pay">—</div><div class="sub" id="cpa-k-pay-sub">billable only</div></div>
     </div>
 
     <div class="card">
       <div class="card-hdr">
         <div>
-          <div class="card-title">Lead Log</div>
+          <div class="card-title">CPA Lead Log</div>
           <div class="card-sub">Updated by your buyer — statuses reflect the latest intake disposition</div>
         </div>
         <div class="filters">
-          <select class="fsel" id="filter-period" onchange="loadCalls()">
+          <select class="fsel" id="cpa-filter-period" onchange="renderSection('cpa')">
             <option value="yesterday">Yesterday</option>
             <option value="current_week">This Week (Mon–Fri)</option>
             <option value="last_week">Last Week (Mon–Fri)</option>
@@ -157,29 +161,72 @@ tbody tr:hover td{background:#fafafa;}
             <option value="month" selected>This Month</option>
             <option value="all">All Time</option>
           </select>
-          <select class="fsel" id="f-bill" onchange="loadCalls()">
+          <select class="fsel" id="cpa-f-bill" onchange="renderSection('cpa')">
             <option value="">All Leads</option>
             <option value="true">Billable Only</option>
           </select>
-          <button class="rbtn" onclick="loadCalls()">↻</button>
+          <button class="rbtn" onclick="loadAllLeads()">↻</button>
         </div>
       </div>
-      <div id="st-load" class="st"><div class="spin"></div><div class="st-t">Loading your leads...</div></div>
-      <div id="st-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No leads yet</div><div class="st-s">Leads will appear here once submitted</div></div>
-      <div id="st-err" class="st" style="display:none"><div class="st-ico">⚠️</div><div class="st-t">Could not load leads</div><div class="st-s" id="st-err-msg"></div></div>
-      <div id="tbl-wrap" style="display:none;overflow-x:auto">
+      <div id="cpa-st-load" class="st"><div class="spin"></div><div class="st-t">Loading your leads...</div></div>
+      <div id="cpa-st-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No leads yet</div><div class="st-s">Leads will appear here once submitted</div></div>
+      <div id="cpa-st-err" class="st" style="display:none"><div class="st-ico">⚠️</div><div class="st-t">Could not load leads</div><div class="st-s" id="cpa-st-err-msg"></div></div>
+      <div id="cpa-tbl-wrap" style="display:none;overflow-x:auto">
         <table>
           <thead><tr>
-            <th>Date</th>
-            <th>Name</th>
-            <th>Phone</th>
-            <th>State</th>
-            <th>Submitted</th>
-            <th>Buyer Status</th>
-            <th>Notes</th>
-            <th>Payout</th>
+            <th>Date</th><th>Name</th><th>Phone</th><th>State</th>
+            <th>Submitted</th><th>Buyer Status</th><th>Notes</th><th>Payout</th>
           </tr></thead>
-          <tbody id="tbl"></tbody>
+          <tbody id="cpa-tbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div style="height:36px"></div>
+
+    <div style="margin-bottom:10px;padding:0 2px">
+      <div style="font-size:15px;font-weight:700;color:#0f1c3f">MVA — CPL Campaign</div>
+      <div style="font-size:12px;color:#9ca3af;margin-top:2px">$100.00 per accepted lead — paid on delivery, nationwide except CA</div>
+    </div>
+    <div class="kpis" style="grid-template-columns:repeat(4,1fr)">
+      <div class="kpi"><div class="lbl">Yesterday</div><div class="val v-blue" id="cpl-k-yesterday">—</div><div class="sub">leads yesterday</div></div>
+      <div class="kpi"><div class="lbl">This Week</div><div class="val v-dark" id="cpl-k-week">—</div><div class="sub">last 7 days</div></div>
+      <div class="kpi"><div class="lbl">Accepted</div><div class="val v-green" id="cpl-k-bill">—</div><div class="sub" id="cpl-k-bill-sub">paid leads</div></div>
+      <div class="kpi"><div class="lbl">Total Payout</div><div class="val v-green" id="cpl-k-pay">—</div><div class="sub" id="cpl-k-pay-sub">accepted only</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-hdr">
+        <div>
+          <div class="card-title">CPL Lead Log</div>
+          <div class="card-sub">Every accepted lead pays immediately — duplicates and rejects do not</div>
+        </div>
+        <div class="filters">
+          <select class="fsel" id="cpl-filter-period" onchange="renderSection('cpl')">
+            <option value="yesterday">Yesterday</option>
+            <option value="current_week">This Week (Mon–Fri)</option>
+            <option value="last_week">Last Week (Mon–Fri)</option>
+            <option value="two_weeks">Last 2 Weeks</option>
+            <option value="month" selected>This Month</option>
+            <option value="all">All Time</option>
+          </select>
+          <select class="fsel" id="cpl-f-bill" onchange="renderSection('cpl')">
+            <option value="">All Leads</option>
+            <option value="true">Accepted Only</option>
+          </select>
+          <button class="rbtn" onclick="loadAllLeads()">↻</button>
+        </div>
+      </div>
+      <div id="cpl-st-load" class="st"><div class="spin"></div><div class="st-t">Loading your leads...</div></div>
+      <div id="cpl-st-empty" class="st" style="display:none"><div class="st-ico">📋</div><div class="st-t">No leads yet</div><div class="st-s">Leads will appear here once submitted</div></div>
+      <div id="cpl-st-err" class="st" style="display:none"><div class="st-ico">⚠️</div><div class="st-t">Could not load leads</div><div class="st-s" id="cpl-st-err-msg"></div></div>
+      <div id="cpl-tbl-wrap" style="display:none;overflow-x:auto">
+        <table>
+          <thead><tr>
+            <th>Date</th><th>Name</th><th>Phone</th><th>State</th>
+            <th>Submitted</th><th>Buyer Status</th><th>Notes</th><th>Payout</th>
+          </tr></thead>
+          <tbody id="cpl-tbl"></tbody>
         </table>
       </div>
     </div>
@@ -212,7 +259,7 @@ function submittedBadge(status) {
   return '<span class="badge bs-default">'+(status||'Received')+'</span>';
 }
 
-// Badge for buyer's status postback
+// Badge for buyer's status postback — CPA campaign semantics
 function buyerBadge(buyerStatus, updatedAt) {
   if (!buyerStatus) return '<span style="color:#d1d5db;font-size:12px">—</span>';
   var s = buyerStatus.toLowerCase().trim();
@@ -231,6 +278,17 @@ function buyerBadge(buyerStatus, updatedAt) {
     ? '<div class="updated-tag">Updated ' + timeAgo(updatedAt) + '</div>'
     : '';
   return '<div><span class="badge '+cls+'">'+label+'</span>'+updated+'</div>';
+}
+
+// Badge for buyer's status postback — CPL campaign semantics (different lifecycle
+// than CPA: NLD's "ACCEPTED" is a FINAL state meaning paid/done, not "still in review")
+function cplBuyerBadge(buyerStatus) {
+  if (!buyerStatus) return '<span style="color:#d1d5db;font-size:12px">—</span>';
+  var s = buyerStatus.toUpperCase().trim();
+  if (s==='ACCEPTED')  return '<span class="badge bs-accepted">✓ Accepted (Paid)</span>';
+  if (s==='DUPLICATED') return '<span class="badge bs-duplicate">Duplicate</span>';
+  if (s==='ERROR')      return '<span class="badge bs-rejected">✗ Rejected</span>';
+  return '<span class="badge bs-default">'+buyerStatus+'</span>';
 }
 
 function timeAgo(isoStr) {
@@ -287,7 +345,7 @@ function showPortal(){
     document.getElementById('did-num').textContent=fmt||S.did;
     document.getElementById('did-box').style.display='';
   }
-  setTimeout(loadCalls,100);
+  setTimeout(loadAllLeads,100);
 }
 
 function doLogout(){
@@ -297,106 +355,117 @@ function doLogout(){
   document.getElementById('pid').value='';
 }
 
-function loadCalls(){
+var ALL_LEADS = { cpa: [], cpl: [] };
+
+function loadAllLeads(){
   if(!S) return;
-  var period=(document.getElementById('filter-period')||{value:'month'}).value;
-  var bill=(document.getElementById('f-bill')||{value:''}).value;
-  var days=PERIOD_DAYS[period]||30;
-  var label=PERIOD_LABELS[period]||'Selected Period';
+  ['cpa','cpl'].forEach(function(p){
+    document.getElementById(p+'-st-load').style.display='';
+    document.getElementById(p+'-st-empty').style.display='none';
+    document.getElementById(p+'-st-err').style.display='none';
+    document.getElementById(p+'-tbl-wrap').style.display='none';
+  });
 
-  document.getElementById('st-load').style.display='';
-  document.getElementById('st-empty').style.display='none';
-  document.getElementById('st-err').style.display='none';
-  document.getElementById('tbl-wrap').style.display='none';
-
-  // Use leads/feed for lead-based campaigns, calls/feed for call-based
-  var isCallsCampaign = (S.campaign||'').toLowerCase() === 'ssdi';
-  var url = isCallsCampaign
-    ? API+'/calls/feed?pub='+encodeURIComponent(S.pub_id)+'&days='+days+'&api_key='+API_KEY
-    : API+'/leads/feed?portal_id='+encodeURIComponent(S.portal_id||S.pub_id)+'&days='+days+'&api_key='+API_KEY;
+  var url = API+'/leads/feed?portal_id='+encodeURIComponent(S.portal_id||S.pub_id)+'&days=9999&api_key='+API_KEY;
 
   fetch(url)
   .then(function(r){return r.json();})
   .then(function(d){
     if(!d.ok) throw new Error(d.error||'Server error');
-    var allCalls=d.leads||d.calls||[];
-
-    var calls=allCalls.slice();
-    if(period==='current_week'){var wb=getWeekBounds(0); calls=calls.filter(function(c){var t=new Date(c.call_date||c.received_at||0);return t>=wb.start&&t<=wb.end;});}
-    else if(period==='last_week'){var wb=getWeekBounds(-1); calls=calls.filter(function(c){var t=new Date(c.call_date||c.received_at||0);return t>=wb.start&&t<=wb.end;});}
-    else if(period==='two_weeks'){var wb0=getWeekBounds(0),wb1=getWeekBounds(-1); calls=calls.filter(function(c){var t=new Date(c.call_date||c.received_at||0);return t>=wb1.start&&t<=wb0.end;});}
-    else if(period==='yesterday'){var yest=new Date();yest.setDate(yest.getDate()-1);var ys=yest.toISOString().split('T')[0]; calls=calls.filter(function(c){return String(c.call_date||c.received_at||'').startsWith(ys);});}
-
-    if(bill==='true') calls=calls.filter(function(c){return c.billable;});
-
-    // KPIs
-    var yest2=new Date();yest2.setDate(yest2.getDate()-1);var ys2=yest2.toISOString().split('T')[0];
-    var wkAgo=new Date();wkAgo.setDate(wkAgo.getDate()-7);var wks=wkAgo.toISOString().split('T')[0];
-    document.getElementById('k-yesterday').textContent=allCalls.filter(function(c){var d=c.received_at||c.call_date||'';return String(d).startsWith(ys2);}).length;
-    document.getElementById('k-week').textContent=allCalls.filter(function(c){var d=(c.received_at||c.call_date||'').split('T')[0];return d>=wks;}).length;
-    // Pending and Queued — separate counts
-    var filteredPending = calls.filter(function(c){ return (c.buyer_status||'').toLowerCase()==='pending'; });
-    var filteredQueued  = calls.filter(function(c){ return (c.buyer_status||'').toLowerCase()==='queued'; });
-    document.getElementById('k-pending').textContent  = filteredPending.length;
-    document.getElementById('k-pending-sub').textContent = label;
-    document.getElementById('k-queued').textContent   = filteredQueued.length;
-    document.getElementById('k-queued-sub').textContent  = label;
-    // Billable and payout reflect the ACTIVE FILTER
-    var filteredBillable = calls.filter(function(c){ return c.billable; });
-    document.getElementById('k-bill').textContent     = filteredBillable.length;
-    document.getElementById('k-bill-sub').textContent = label;
-    document.getElementById('k-pay').textContent      = '$' + filteredBillable.reduce(function(s,c){ return s + parseFloat(c.payout_amount||0); }, 0).toFixed(2);
-    document.getElementById('k-pay-sub').textContent  = label;
-
-    document.getElementById('st-load').style.display='none';
-    if(!calls.length){document.getElementById('st-empty').style.display='';return;}
-
-    calls.sort(function(a,b){return new Date(b.received_at||b.call_date||0)-new Date(a.received_at||a.call_date||0);});
-
-    var tbody=document.getElementById('tbl');
-    tbody.innerHTML='';
-    calls.forEach(function(c){
-      var rawDt=c.source_system==='sheet_import'?c.call_date:(c.received_at||c.call_date||'');
-      var dateObj=rawDt?new Date(rawDt):null;
-      var date=dateObj
-        ?dateObj.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'})+
-          (c.source_system!=='sheet_import'
-            ?' <span style="color:#9ca3af;font-size:11px">'+dateObj.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true,timeZone:'America/New_York'})+'</span>'
-            :'')
-        :'—';
-
-      // Extract buyer update time from raw postback if available
-      var buyerUpdatedAt = null;
-      try {
-        if(c.raw && c.raw.ea_postback && c.raw.ea_postback.synced_at) buyerUpdatedAt = c.raw.ea_postback.synced_at;
-      } catch(e){}
-
-      var name=(c.caller_name||(c.first_name||c.last_name?(((c.first_name||'')+' '+(c.last_name||'')).trim()):null)||'—');
-      var phone=c.caller_id||c.phone||'—';
-      var state=c.state||'—';
-      var sysStatus=c.status||c.call_status_label||'received';
-      var pay=c.payout_amount&&parseFloat(c.payout_amount)>0?'<span style="font-weight:700;color:#15803d">$'+parseFloat(c.payout_amount).toFixed(2)+'</span>':'<span style="color:#d1d5db">—</span>';
-      var notes=c.notes||c.buyer_error||'';
-
-      var tr=document.createElement('tr');
-      tr.innerHTML=
-        '<td>'+date+'</td>'+
-        '<td style="font-weight:500">'+escH(name)+'</td>'+
-        '<td style="font-family:monospace;font-size:12px;color:#6b7280">'+escH(phone)+'</td>'+
-        '<td style="font-size:12px">'+escH(state)+'</td>'+
-        '<td>'+submittedBadge(sysStatus)+'</td>'+
-        '<td>'+buyerBadge(c.buyer_status, buyerUpdatedAt)+'</td>'+
-        '<td style="font-size:11px;color:#6b7280;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+escH(notes)+'">'+escH(notes||'—')+'</td>'+
-        '<td>'+pay+'</td>';
-      tbody.appendChild(tr);
-    });
-    document.getElementById('tbl-wrap').style.display='';
+    var all = d.leads||[];
+    ALL_LEADS.cpa = all.filter(function(c){ return (c.campaign||'')==='mva-funnel'; });
+    ALL_LEADS.cpl = all.filter(function(c){ return (c.campaign||'')==='mva-cpl'; });
+    renderSection('cpa');
+    renderSection('cpl');
   })
   .catch(function(e){
-    document.getElementById('st-load').style.display='none';
-    document.getElementById('st-err').style.display='';
-    document.getElementById('st-err-msg').textContent=e.message;
+    ['cpa','cpl'].forEach(function(p){
+      document.getElementById(p+'-st-load').style.display='none';
+      document.getElementById(p+'-st-err').style.display='';
+      document.getElementById(p+'-st-err-msg').textContent=e.message;
+    });
   });
+}
+
+function renderSection(prefix){
+  var allCalls = ALL_LEADS[prefix] || [];
+  var period=(document.getElementById(prefix+'-filter-period')||{value:'month'}).value;
+  var bill=(document.getElementById(prefix+'-f-bill')||{value:''}).value;
+  var label=PERIOD_LABELS[period]||'Selected Period';
+
+  var calls=allCalls.slice();
+  if(period==='current_week'){var wb=getWeekBounds(0); calls=calls.filter(function(c){var t=new Date(c.call_date||c.received_at||0);return t>=wb.start&&t<=wb.end;});}
+  else if(period==='last_week'){var wb=getWeekBounds(-1); calls=calls.filter(function(c){var t=new Date(c.call_date||c.received_at||0);return t>=wb.start&&t<=wb.end;});}
+  else if(period==='two_weeks'){var wb0=getWeekBounds(0),wb1=getWeekBounds(-1); calls=calls.filter(function(c){var t=new Date(c.call_date||c.received_at||0);return t>=wb1.start&&t<=wb0.end;});}
+  else if(period==='yesterday'){var yest=new Date();yest.setDate(yest.getDate()-1);var ys=yest.toISOString().split('T')[0]; calls=calls.filter(function(c){return String(c.call_date||c.received_at||'').startsWith(ys);});}
+
+  if(bill==='true') calls=calls.filter(function(c){return c.billable;});
+
+  // KPIs
+  var yest2=new Date();yest2.setDate(yest2.getDate()-1);var ys2=yest2.toISOString().split('T')[0];
+  var wkAgo=new Date();wkAgo.setDate(wkAgo.getDate()-7);var wks=wkAgo.toISOString().split('T')[0];
+  document.getElementById(prefix+'-k-yesterday').textContent=allCalls.filter(function(c){var d=c.received_at||c.call_date||'';return String(d).startsWith(ys2);}).length;
+  document.getElementById(prefix+'-k-week').textContent=allCalls.filter(function(c){var d=(c.received_at||c.call_date||'').split('T')[0];return d>=wks;}).length;
+
+  if (prefix === 'cpa') {
+    var filteredPending = calls.filter(function(c){ return (c.buyer_status||'').toLowerCase()==='pending'; });
+    var filteredQueued  = calls.filter(function(c){ return (c.buyer_status||'').toLowerCase()==='queued'; });
+    document.getElementById('cpa-k-pending').textContent  = filteredPending.length;
+    document.getElementById('cpa-k-pending-sub').textContent = label;
+    document.getElementById('cpa-k-queued').textContent   = filteredQueued.length;
+    document.getElementById('cpa-k-queued-sub').textContent  = label;
+  }
+
+  var filteredBillable = calls.filter(function(c){ return c.billable; });
+  document.getElementById(prefix+'-k-bill').textContent     = filteredBillable.length;
+  document.getElementById(prefix+'-k-bill-sub').textContent = label;
+  document.getElementById(prefix+'-k-pay').textContent      = '$' + filteredBillable.reduce(function(s,c){ return s + parseFloat(c.payout_amount||0); }, 0).toFixed(2);
+  document.getElementById(prefix+'-k-pay-sub').textContent  = label;
+
+  document.getElementById(prefix+'-st-load').style.display='none';
+  if(!calls.length){document.getElementById(prefix+'-st-empty').style.display='';return;}
+
+  calls.sort(function(a,b){return new Date(b.received_at||b.call_date||0)-new Date(a.received_at||a.call_date||0);});
+
+  var tbody=document.getElementById(prefix+'-tbl');
+  tbody.innerHTML='';
+  calls.forEach(function(c){
+    var rawDt=c.source_system==='sheet_import'?c.call_date:(c.received_at||c.call_date||'');
+    var dateObj=rawDt?new Date(rawDt):null;
+    var date=dateObj
+      ?dateObj.toLocaleDateString('en-US',{month:'2-digit',day:'2-digit',year:'numeric'})+
+        (c.source_system!=='sheet_import'
+          ?' <span style="color:#9ca3af;font-size:11px">'+dateObj.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:true,timeZone:'America/New_York'})+'</span>'
+          :'')
+      :'—';
+
+    var buyerUpdatedAt = null;
+    try {
+      if(c.raw && c.raw.ea_postback && c.raw.ea_postback.synced_at) buyerUpdatedAt = c.raw.ea_postback.synced_at;
+    } catch(e){}
+
+    var name=(c.caller_name||(c.first_name||c.last_name?(((c.first_name||'')+' '+(c.last_name||'')).trim()):null)||'—');
+    var phone=c.caller_id||c.phone||'—';
+    var state=c.state||'—';
+    var sysStatus=c.status||c.call_status_label||'received';
+    var pay=c.payout_amount&&parseFloat(c.payout_amount)>0?'<span style="font-weight:700;color:#15803d">$'+parseFloat(c.payout_amount).toFixed(2)+'</span>':'<span style="color:#d1d5db">—</span>';
+    var notes=c.notes||c.buyer_error||'';
+
+    var badgeHtml = prefix === 'cpl' ? cplBuyerBadge(c.buyer_status) : buyerBadge(c.buyer_status, buyerUpdatedAt);
+
+    var tr=document.createElement('tr');
+    tr.innerHTML=
+      '<td>'+date+'</td>'+
+      '<td style="font-weight:500">'+escH(name)+'</td>'+
+      '<td style="font-family:monospace;font-size:12px;color:#6b7280">'+escH(phone)+'</td>'+
+      '<td style="font-size:12px">'+escH(state)+'</td>'+
+      '<td>'+submittedBadge(sysStatus)+'</td>'+
+      '<td>'+badgeHtml+'</td>'+
+      '<td style="font-size:11px;color:#6b7280;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+escH(notes)+'">'+escH(notes||'—')+'</td>'+
+      '<td>'+pay+'</td>';
+    tbody.appendChild(tr);
+  });
+  document.getElementById(prefix+'-tbl-wrap').style.display='';
 }
 
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
