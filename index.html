@@ -373,7 +373,7 @@ function loadAllLeads(){
   .then(function(d){
     if(!d.ok) throw new Error(d.error||'Server error');
     var all = d.leads||[];
-    ALL_LEADS.cpa = all.filter(function(c){ return (c.campaign||'')==='mva-funnel'; });
+    ALL_LEADS.cpa = all.filter(function(c){ return ['mva-funnel','mva-nyc-split'].indexOf(c.campaign||'') !== -1; });
     ALL_LEADS.cpl = all.filter(function(c){ return (c.campaign||'')==='mva-cpl'; });
     renderSection('cpa');
     renderSection('cpl');
