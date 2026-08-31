@@ -386,7 +386,7 @@ function loadCalls(){
         '<td style="font-size:12px">'+escH(state)+'</td>'+
         '<td>'+submittedBadge(sysStatus)+'</td>'+
         '<td>'+buyerBadge(c.buyer_status, buyerUpdatedAt)+'</td>'+
-        '<td style="font-size:11px;color:#6b7280;max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="'+escH(notes)+'">'+escH(notes||'—')+'</td>'+
+        '<td style="font-size:11px;color:#6b7280;max-width:220px;white-space:normal;word-break:break-word" title="'+escH(notes)+'">'+escH(notes||'—')+'</td>'+
         '<td>'+pay+'</td>';
       tbody.appendChild(tr);
     });
