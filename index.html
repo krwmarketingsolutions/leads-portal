@@ -220,9 +220,14 @@ function buyerBadge(buyerStatus, updatedAt) {
   var label = buyerStatus;
   // "Accepted" from buyer just means received — show as Submitted until disposition changes
   if (s==='accepted') { cls='bs-pending'; label='Submitted'; }
+  else if (s==='submitted') { cls='bs-pending'; label='Submitted'; }
   else if (s==='queued') cls='bs-queued';
   else if (s==='pending') { cls='bs-pending'; label='Submitted'; }
   else if (s==='rejected'||s==='disqualified'||s==='dnq') cls='bs-rejected';
+  else if (s==='lost') cls='bs-rejected';
+  else if (s==='chase') cls='bs-queued';
+  else if (s==='under review') cls='bs-duplicate';
+  else if (s==='assigned') cls='bs-queued';
   else if (s==='returned') cls='bs-returned';
   else if (s==='duplicate') cls='bs-duplicate';
   else if (s==='cpa'||s==='retained'||s==='signed') { cls='bs-accepted'; label='CPA'; }
