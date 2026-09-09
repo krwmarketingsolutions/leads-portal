@@ -317,8 +317,8 @@ function loadCalls(){
   // Use leads/feed for lead-based campaigns, calls/feed for call-based
   var isCallsCampaign = (S.campaign||'').toLowerCase() === 'ssdi';
   var url = isCallsCampaign
-    ? API+'/calls/feed?pub='+encodeURIComponent(S.pub_id)+'&days='+days+'&api_key='+API_KEY
-    : API+'/leads/feed?portal_id='+encodeURIComponent(S.portal_id||S.pub_id)+'&days='+days+'&api_key='+API_KEY;
+    ? API+'/calls/feed?pub='+encodeURIComponent(S.pub_id)+'&days='+days+'&limit=5000&api_key='+API_KEY
+    : API+'/leads/feed?portal_id='+encodeURIComponent(S.portal_id||S.pub_id)+'&days='+days+'&limit=5000&api_key='+API_KEY;
 
   fetch(url)
   .then(function(r){return r.json();})
@@ -391,7 +391,7 @@ function loadCalls(){
         '<td style="font-size:12px">'+escH(state)+'</td>'+
         '<td>'+submittedBadge(sysStatus)+'</td>'+
         '<td>'+buyerBadge(c.buyer_status, buyerUpdatedAt)+'</td>'+
-        '<td style="font-size:11px;color:#6b7280;max-width:220px;white-space:normal;word-break:break-word" title="'+escH(notes)+'">'+escH(notes||'—')+'</td>'+
+        '<td style="font-size:12px;color:#374151;max-width:280px;min-width:200px;white-space:normal;word-break:break-word;line-height:1.6;padding-top:10px;padding-bottom:10px" title="'+escH(notes)+'">'+(notes ? formatNotes(notes) : '<span style="color:#d1d5db">—</span>')+'</td>'+
         '<td>'+pay+'</td>';
       tbody.appendChild(tr);
     });
@@ -405,6 +405,13 @@ function loadCalls(){
 }
 
 function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function formatNotes(s){
+  // Escape first, then insert a line break after "Category — " so the
+  // status word and its explanation visually separate, easier to scan
+  // at a glance (Kyler, Sep 4).
+  var escaped = escH(s);
+  return escaped.replace(/(\s+—\s+)/, '$1<br>');
+}
 </script>
 </body>
 </html>
