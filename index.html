@@ -165,6 +165,7 @@ tbody tr:hover td{background:var(--paper);}
 .b-rej{background:var(--red-soft);color:var(--red);}
 .b-open{background:var(--brown-soft);color:var(--brown);}
 .b-sub{background:var(--paper-2);color:var(--ink-3);}
+.b-pending{background:var(--brown-soft);color:var(--brown);}
 th.sortable{cursor:pointer;user-select:none;}
 th.sortable:hover{color:var(--ink);}
 .notes-cell{font-size:12px;color:var(--ink-2);max-width:280px;min-width:160px;white-space:normal;line-height:1.45;}
@@ -241,9 +242,9 @@ th.sortable:hover{color:var(--ink);}
     <div class="perf-card">
       <div class="perf-title">Your performance</div>
       <div class="perf-grid">
-        <div class="perf-item"><div class="n" id="perf-accept">—</div><div class="l">acceptance rate</div></div>
+        <div class="perf-item"><div class="n" id="perf-accept">—</div><div class="l">delivered to buyer</div></div>
         <div class="perf-item"><div class="n neutral" id="perf-reject">—</div><div class="l">rejected after review</div></div>
-        <div class="perf-item"><div class="n" id="perf-signed">—</div><div class="l">signed rate on accepted</div></div>
+        <div class="perf-item"><div class="n" id="perf-signed">—</div><div class="l">signed rate on delivered</div></div>
         <div class="perf-item"><div class="n neutral"><span id="perf-total">—</span><span class="perf-trend" id="perf-trend"></span></div><div class="l">this week vs. last</div></div>
       </div>
     </div>
@@ -252,7 +253,7 @@ th.sortable:hover{color:var(--ink);}
       <div class="card-hdr">
         <div>
           <div class="card-title">Lead Log</div>
-          <div class="card-sub" id="log-sub">Every lead you sent, with the buyer's latest response</div>
+          <div class="card-sub" id="log-sub">Every lead you sent. Delivered means it reached the buyer and we're waiting on their response.</div>
         </div>
         <div class="filters">
           <input type="date" class="fsel" id="date-from">
@@ -323,7 +324,7 @@ th.sortable:hover{color:var(--ink);}
             <select id="pb-method"><option value="POST">POST, JSON body</option><option value="GET">GET, query string</option></select></div>
           <div class="pb-field"><label>Send me a postback when a lead is</label>
             <div class="pb-events">
-              <label><input type="checkbox" id="ev-accepted" value="accepted"><span>Accepted<small>The buyer took the lead</small></span></label>
+              <label><input type="checkbox" id="ev-accepted" value="accepted"><span>Delivered<small>Reached the buyer, awaiting response</small></span></label>
               <label><input type="checkbox" id="ev-rejected" value="rejected"><span>Rejected<small>Includes the reason</small></span></label>
               <label><input type="checkbox" id="ev-signed" value="signed"><span>Signed<small>Case retained, payout earned</small></span></label>
               <label><input type="checkbox" id="ev-disposition_update" value="disposition_update"><span>Any other update<small>In outreach, pending, and so on</small></span></label>
@@ -373,7 +374,7 @@ function timeAgo(iso){ var m=Math.floor((Date.now()-new Date(iso).getTime())/600
 function money(n){ return '$'+(Math.round(n*100)/100).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 function fmtPhone(p){ var d=String(p||'').replace(/\D/g,''); return d.length===10 ? '('+d.slice(0,3)+') '+d.slice(3,6)+'-'+d.slice(6) : (p||'—'); }
 function badge(r){
-  var cls={ 'Signed':'b-signed','Accepted':'b-acc','Rejected':'b-rej','Not accepted':'b-rej','In outreach':'b-open','Pending':'b-open','Not worked':'b-sub','Submitted':'b-sub','Test':'b-sub' }[r]||'b-sub';
+  var cls={ 'Signed':'b-signed','Delivered':'b-pending','Rejected':'b-rej','Not delivered':'b-rej','In outreach':'b-open','Pending':'b-open','Not worked':'b-sub','Test':'b-sub' }[r]||'b-sub';
   return '<span class="badge '+cls+'">'+escH(r)+'</span>';
 }
 function inRange(iso){ if(!iso) return false; var d=new Date(iso); if(DATE_FROM && d<DATE_FROM) return false; if(DATE_TO && d>DATE_TO) return false; return true; }
@@ -438,7 +439,7 @@ function updateKPIs(){
   document.getElementById('k-pay').textContent=money(signed.reduce(function(s,l){return s+(l.payout||0);},0));
   document.getElementById('k-pay-sub').textContent=RATE?money(RATE)+' per signed case':'signed cases only';
   // performance
-  var sent=inR.length, acc=inR.filter(function(l){ return ['Accepted','Signed','In outreach','Pending','Rejected'].indexOf(l.response)>-1 && l.submitted_status!=='rejected' && l.submitted_status!=='error'; });
+  var sent=inR.length, acc=inR.filter(function(l){ return ['Delivered','Signed','In outreach','Pending','Rejected'].indexOf(l.response)>-1 && l.submitted_status!=='rejected' && l.submitted_status!=='error'; });
   var rej=inR.filter(function(l){ return l.response==='Rejected'; }).length;
   var sg=inR.filter(function(l){ return l.response==='Signed'; }).length;
   document.getElementById('perf-accept').textContent=sent?Math.round(acc.length/sent*100)+'%':'—';
@@ -448,7 +449,7 @@ function updateKPIs(){
   var t=document.getElementById('perf-trend'); if(lastWeek.length){ var pct=Math.round((week.length-lastWeek.length)/lastWeek.length*100); t.textContent=(pct>=0?'▲ ':'▼ ')+Math.abs(pct)+'%'; t.className='perf-trend '+(pct>=0?'up':'down'); } else { t.textContent=''; }
   // chips
   var counts={}; inR.forEach(function(l){ counts[l.response]=(counts[l.response]||0)+1; });
-  var order=['Accepted','In outreach','Pending','Signed','Rejected','Not accepted','Not worked','Submitted'];
+  var order=['Delivered','In outreach','Pending','Signed','Rejected','Not delivered','Not worked'];
   document.getElementById('chips').innerHTML='<button class="chip'+(CHIP===''?' on':'')+'" onclick="setChip(\'\')">All <b>'+inR.length+'</b></button>'+
     order.filter(function(k){return counts[k];}).map(function(k){ return '<button class="chip'+(CHIP===k?' on':'')+'" onclick="setChip(\''+k+'\')">'+escH(k)+' <b>'+counts[k]+'</b></button>'; }).join('');
 }
@@ -520,8 +521,9 @@ function openDetail(id){
   var f=[['Phone',fmtPhone(l.phone)],['Email',l.email],['State',l.state],['Zip',l.zip],['Incident date',l.incident_date],['Injury',l.injury],['At fault',l.at_fault],['Has attorney',l.have_attorney],['TrustedForm',l.trustedform?'<a href="'+escH(l.trustedform)+'" target="_blank" rel="noopener">View certificate</a>':null]];
   document.getElementById('dm-fields').innerHTML=f.filter(function(x){return x[1];}).map(function(x){ return '<div class="field-row"><span class="fl">'+x[0]+'</span><span class="fv">'+(x[0]==='TrustedForm'?x[1]:escH(x[1]))+'</span></div>'; }).join('');
   var tl=[{t:'Submitted',d:fmtDate(l.received_at)+' '+fmtTime(l.received_at)+' ET',on:true}];
-  if(l.submitted_status==='forwarded'||['Accepted','Signed','In outreach','Pending','Rejected'].indexOf(l.response)>-1) tl.push({t:'Accepted by buyer',d:'Lead passed intake and was taken',on:true});
-  else if(l.submitted_status==='rejected'||l.submitted_status==='error'||l.response==='Not accepted') tl.push({t:'Not accepted',d:l.notes||'Did not pass intake',on:false});
+  if(l.response==='Delivered') tl.push({t:'Delivered to buyer',d:'Awaiting the buyer\'s response',on:true});
+  else if(['Signed','In outreach','Pending','Rejected'].indexOf(l.response)>-1) tl.push({t:'Delivered to buyer',d:'Buyer received the lead',on:true});
+  else if(l.submitted_status==='rejected'||l.submitted_status==='error'||l.response==='Not delivered') tl.push({t:'Not delivered',d:l.notes||'Buyer did not take the lead',on:false});
   if(l.response==='Signed') tl.push({t:'Signed',d:'Case retained'+(l.payout>0?' · '+money(l.payout):''),on:true});
   else if(l.response==='Rejected') tl.push({t:'Rejected after review',d:l.notes||'',on:false});
   else if(l.response==='In outreach'||l.response==='Pending') tl.push({t:l.response,d:l.notes||'Buyer is working the lead',on:true});
