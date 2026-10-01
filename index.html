@@ -432,6 +432,13 @@ function doLogin(){
 }
 // per-publisher, per-section priority states shown in the banner box
 var PRIORITY = {
+  // Leadbloom - 21 priority states (patch 269); both login-key spellings
+  'LEADBLOOM': {
+    'MVA': { list: 'AZ, FL, GA, IL, IN, IA, MI, MN, MO, MT, NE, NV, NM, NY, ND, OK, TN, TX, UT, WI, WY', note: 'MVA leads are accepted from these 21 states. Leads from other states are accepted at lower priority. CA and CO are not accepted.' }
+  },
+  'KRW-LEADBLOOM': {
+    'MVA': { list: 'AZ, FL, GA, IL, IN, IA, MI, MN, MO, MT, NE, NV, NM, NY, ND, OK, TN, TX, UT, WI, WY', note: 'MVA leads are accepted from these 21 states. Leads from other states are accepted at lower priority. CA and CO are not accepted.' }
+  },
   'LA-HI': {
     'MVA':       { list: 'FL, GA, TX, MI, IN, IL, WI, MN, MO, NE, OK, TN', note: 'MVA leads are accepted from these 12 states only. Leads from other states are not delivered.' },
     'Rideshare': { list: 'Nationwide', note: 'Rideshare leads are accepted from every state.' },
