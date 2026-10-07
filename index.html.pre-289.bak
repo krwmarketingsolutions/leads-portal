@@ -378,7 +378,7 @@ th.sortable:hover{color:var(--ink);}
 
 <script>
 var API = 'https://krw-backend-production.up.railway.app';
-var API_KEY = 'pub_ce10a9113455f9c2d2c3ee1530dcb6d2';
+var API_KEY = '64tgzb5ostadx1azjio9crdlduw4vf29';
 var S = null;
 var ALL = [];           // every lead from /portal/leads
 var RATE = 0;
