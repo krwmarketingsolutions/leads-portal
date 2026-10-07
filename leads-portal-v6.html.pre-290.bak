@@ -58,7 +58,7 @@ button, input, select{font-family:inherit;}
 .did-box .num{font-size:17px;font-weight:600;font-family:monospace;letter-spacing:.04em;}
 
 /* ---------- KPI strip ---------- */
-.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:22px;}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px;}
 @media(max-width:660px){.kpis{grid-template-columns:repeat(2,1fr);}}
 .kpi{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--brown);padding:16px 18px;}
 .kpi .lbl{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--ink-3);margin-bottom:7px;}
@@ -68,15 +68,6 @@ button, input, select{font-family:inherit;}
 
 /* ---------- performance summary (feature 3) ---------- */
 .perf-card{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--green);padding:18px 20px;margin-bottom:22px;}
-.wk-card{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--green);padding:16px 18px;margin-bottom:22px;}
-.wk-card .wk-title{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--ink-3);margin-bottom:10px;}
-.wk-table{width:100%;border-collapse:collapse;font-size:14px;}
-.wk-table th{text-align:left;font-size:11px;font-weight:600;letter-spacing:.05em;color:var(--ink-3);padding:6px 8px;border-bottom:1px solid var(--line);}
-.wk-table td{padding:8px;border-bottom:1px solid var(--line);color:var(--ink);}
-.wk-table td.r,.wk-table th.r{text-align:right;}
-.wk-table tr.cur td{font-weight:600;}
-.wk-table td.amt{font-weight:600;color:var(--green);}
-.wk-table tr.tot td{border-top:2px solid var(--line);border-bottom:0;font-weight:600;}
 .perf-title{font-size:15px;font-weight:600;margin-bottom:14px;}
 .perf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;}
 @media(max-width:660px){.perf-grid{grid-template-columns:repeat(2,1fr);}}
@@ -248,16 +239,10 @@ th.sortable:hover{color:var(--ink);}
     </div>
 
     <div class="kpis">
-      <div class="kpi"><div class="lbl">Today</div><div class="val" id="k-today">—</div><div class="sub">sent today (ET)</div></div>
       <div class="kpi"><div class="lbl">Yesterday</div><div class="val" id="k-yesterday">—</div><div class="sub">leads sent</div></div>
       <div class="kpi"><div class="lbl">This Week</div><div class="val" id="k-week">—</div><div class="sub">last 7 days</div></div>
       <div class="kpi"><div class="lbl">Signed</div><div class="val v-green" id="k-signed">—</div><div class="sub" id="k-signed-sub">cases signed</div></div>
       <div class="kpi"><div class="lbl">Payout</div><div class="val v-green" id="k-pay">—</div><div class="sub" id="k-pay-sub">signed cases only</div></div>
-    </div>
-
-    <div class="wk-card" id="wk-card" style="display:none">
-      <div class="wk-title">WEEKLY PAYOUT (MON–SUN)</div>
-      <table class="wk-table"><thead><tr><th>Week</th><th class="r">Signed</th><th class="r">Amount</th></tr></thead><tbody id="wk-body"></tbody></table>
     </div>
 
     <div class="perf-card">
@@ -320,7 +305,7 @@ th.sortable:hover{color:var(--ink);}
   <div class="modal">
     <div class="modal-hdr">
       <div><h3 id="dm-title">—</h3><div class="sub" id="dm-sub">—</div></div>
-      <div style="display:flex;gap:10px;align-items:center"><button class="rbtn" id="dm-remove" onclick="removeLead()" title="Hide this lead from your portal">Remove from my portal</button><button class="modal-close" onclick="closeDetail()" aria-label="Close">×</button></div>
+      <button class="modal-close" onclick="closeDetail()" aria-label="Close">×</button>
     </div>
     <div class="modal-body">
       <div class="modal-section"><h4>Buyer response</h4><div id="dm-response" style="font-size:13px;line-height:1.5"></div></div>
@@ -378,7 +363,7 @@ th.sortable:hover{color:var(--ink);}
 
 <script>
 var API = 'https://krw-backend-production.up.railway.app';
-var API_KEY = 'pub_ce10a9113455f9c2d2c3ee1530dcb6d2';
+var API_KEY = '64tgzb5ostadx1azjio9crdlduw4vf29';
 var S = null;
 var ALL = [];           // every lead from /portal/leads
 var RATE = 0;
@@ -394,10 +379,10 @@ function renderVertTabs(){
   var bar=document.getElementById('vtabs');
   if(keys.length<2){ VERT=''; bar.className='vtabs'; bar.innerHTML=''; return; }
   if(VERT===''||keys.indexOf(VERT)<0) VERT=keys[0];
-  bar.className='vtabs on'; applyPriority();
+  bar.className='vtabs on';
   bar.innerHTML=keys.map(function(v){ return '<button class="vtab'+(VERT===v?' on':'')+'" onclick="setVert(\''+v+'\')">'+escH(v)+'<b>'+have[v]+'</b></button>'; }).join('');
 }
-function setVert(v){ VERT=v; CHIP=''; applyPriority(); document.getElementById('resp-filter').value=''; document.getElementById('state-filter').value=''; renderVertTabs(); buildFilters(); updateKPIs(); renderTable(); }
+function setVert(v){ VERT=v; CHIP=''; document.getElementById('resp-filter').value=''; document.getElementById('state-filter').value=''; renderVertTabs(); buildFilters(); updateKPIs(); renderTable(); }
 var SORT = { key: 'date', dir: 'desc' };
 var LAST_LOAD = null;
 var PB = null;          // postback settings
@@ -430,30 +415,6 @@ function doLogin(){
   }).catch(function(){ errEl.textContent='Could not reach the server. Try again in a moment.'; errEl.style.display=''; })
   .finally(function(){ btn.textContent='Sign In'; btn.disabled=false; });
 }
-// per-publisher, per-section priority states shown in the banner box
-var PRIORITY = {
-  // Leadbloom - 21 priority states (patch 269); both login-key spellings
-  'LEADBLOOM': {
-    'MVA': { list: 'AZ, FL, GA, IL, IN, IA, MI, MN, MO, MT, NE, NV, NM, NY, ND, OK, TN, TX, UT, WI, WY', note: 'MVA leads are accepted from these 21 states. Leads from other states are accepted at lower priority. CA and CO are not accepted.' }
-  },
-  'KRW-LEADBLOOM': {
-    'MVA': { list: 'AZ, FL, GA, IL, IN, IA, MI, MN, MO, MT, NE, NV, NM, NY, ND, OK, TN, TX, UT, WI, WY', note: 'MVA leads are accepted from these 21 states. Leads from other states are accepted at lower priority. CA and CO are not accepted.' }
-  },
-  'LA-HI': {
-    'MVA':       { list: 'FL, GA, TX, MI, IN, IL, WI, MN, MO, NE, OK, TN', note: 'MVA leads are accepted from these 12 states only. Leads from other states are not delivered.' },
-    'Rideshare': { list: 'Nationwide', note: 'Rideshare leads are accepted from every state.' },
-    'Roblox':    { list: 'Nationwide', note: 'Roblox leads are accepted from every state.' }
-  }
-};
-function applyPriority(){
-  if(!S) return;
-  var pk=String(S.portal_id||S.pub_id||'').toUpperCase().split('-').slice(0,2).join('-');
-  var pub=PRIORITY[pk]; if(!pub) return;
-  var v=(typeof VERT!=='undefined' && VERT) ? VERT : 'MVA';
-  var pr=pub[v]||pub['MVA'];
-  var el=document.getElementById('states-list'), nt=document.querySelector('.states-box .note');
-  if(el) el.textContent=pr.list; if(nt) nt.textContent=pr.note;
-}
 function showPortal(){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('portal-screen').style.display='block';
@@ -461,7 +422,6 @@ function showPortal(){
   document.getElementById('tb-name').textContent=S.name+' — Dashboard';
   document.getElementById('wb-name').textContent='Welcome back, '+first+'!';
   document.getElementById('wb-id').textContent='Portal ID: '+(S.portal_id||S.pub_id);
-  applyPriority();
   loadLeads(); loadPostbackSettings();
   if(!window._tick) window._tick=setInterval(function(){ if(S) loadLeads(true); },120000);
 }
@@ -493,22 +453,13 @@ function updateKPIs(){
   var inR=VL.filter(function(l){ return !(DATE_FROM||DATE_TO) || inRange(l.received_at); });
   var yest=VL.filter(function(l){ return String(l.received_at||'').startsWith(ys); }).length;
   var week=VL.filter(function(l){ return new Date(l.received_at)>=w; }), lastWeek=VL.filter(function(l){ var d=new Date(l.received_at); return d>=w2 && d<w; });
-  // Signed + Payout cards: this calendar week (Mon-Sun) unless a custom range is set
-  var d0=function(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); };
-  var now=new Date(), dow=(now.getDay()+6)%7, wkMon=d0(new Date(now.getTime()-dow*86400000)), wkSun=new Date(wkMon.getTime()+6*86400000+86399999);
-  var payBase=(DATE_FROM||DATE_TO)?inR:VL.filter(function(l){ var t=new Date(l.received_at).getTime(); return t>=wkMon.getTime() && t<=wkSun.getTime(); });
-  var signed=payBase.filter(function(l){ return l.billable; });
-  var etDay=function(d){ try{ return new Date(d).toLocaleDateString('en-CA',{timeZone:'America/New_York'}); }catch(e){ return String(d||'').split('T')[0]; } };
-  var todayET=etDay(new Date());
-  var today=VL.filter(function(l){ return l.received_at && etDay(l.received_at)===todayET; }).length;
-  document.getElementById('k-today').textContent=today;
+  var signed=inR.filter(function(l){ return l.billable; });
   document.getElementById('k-yesterday').textContent=yest;
   document.getElementById('k-week').textContent=week.length;
   document.getElementById('k-signed').textContent=signed.length;
-  document.getElementById('k-signed-sub').textContent=(DATE_FROM||DATE_TO)?'in selected range':'this week (Mon–Sun)';
+  document.getElementById('k-signed-sub').textContent=(DATE_FROM||DATE_TO)?'in selected range':'all time';
   document.getElementById('k-pay').textContent=money(signed.reduce(function(s,l){return s+(l.payout||0);},0));
-  document.getElementById('k-pay-sub').textContent=(DATE_FROM||DATE_TO)?'in selected range':'this week (Mon–Sun)';
-  renderWeeklyPayout(VL);
+  document.getElementById('k-pay-sub').textContent=RATE?money(RATE)+' per signed case':'signed cases only';
   // performance
   var sent=inR.length, acc=inR.filter(function(l){ return ['Delivered','Signed','In outreach','Pending','Rejected'].indexOf(l.response)>-1 && l.submitted_status!=='rejected' && l.submitted_status!=='error'; });
   var rej=inR.filter(function(l){ return l.response==='Rejected'; }).length;
@@ -525,22 +476,6 @@ function updateKPIs(){
     order.filter(function(k){return counts[k];}).map(function(k){ return '<button class="chip'+(CHIP===k?' on':'')+'" onclick="setChip(\''+k+'\')">'+escH(k)+' <b>'+counts[k]+'</b></button>'; }).join('');
 }
 function setChip(k){ CHIP=k; document.getElementById('resp-filter').value=''; updateKPIs(); renderTable(); }
-function renderWeeklyPayout(list){
-  var card=document.getElementById('wk-card'), body=document.getElementById('wk-body'); if(!card||!body) return;
-  var bill=(list||[]).filter(function(l){ return l.billable; });
-  var d0=function(d){ return new Date(d.getFullYear(),d.getMonth(),d.getDate()); };
-  var now=new Date(), dow=(now.getDay()+6)%7, thisMon=d0(new Date(now.getTime()-dow*86400000));
-  var fm=function(d){ return d.toLocaleDateString([],{month:'short',day:'numeric'}); };
-  var weeks=[], total=0, totalN=0;
-  for(var i=0;i<8;i++){
-    var mon=new Date(thisMon.getTime()-i*7*86400000), sun=new Date(mon.getTime()+6*86400000+86399999);
-    var rows=bill.filter(function(l){ var t=new Date(l.received_at).getTime(); return t>=mon.getTime() && t<=sun.getTime(); });
-    var amt=rows.reduce(function(a,l){ return a+(l.payout||0); },0); total+=amt; totalN+=rows.length;
-    weeks.push('<tr class="'+(i===0?'cur':'')+'"><td>'+fm(mon)+' – '+fm(sun)+(i===0?' (this week)':'')+'</td><td class="r">'+rows.length+'</td><td class="r amt">'+money(amt)+'</td></tr>');
-  }
-  body.innerHTML=weeks.join('')+'<tr class="tot"><td>Last 8 weeks</td><td class="r">'+totalN+'</td><td class="r amt">'+money(total)+'</td></tr>';
-  card.style.display='';
-}
 
 // ---------- table ----------
 function setSort(k){ if(SORT.key===k) SORT.dir=SORT.dir==='asc'?'desc':'asc'; else { SORT.key=k; SORT.dir=(k==='date'||k==='pay')?'desc':'asc'; } renderTable(); }
@@ -600,24 +535,7 @@ function exportCSV(){
 }
 
 // ---------- detail ----------
-var DM_ID = null;
-function removeLead(){
-  if(!DM_ID) return;
-  if(!confirm('Remove this lead from your portal? It will no longer appear in your lists or counts.')) return;
-  var btn=document.getElementById('dm-remove'); if(btn){ btn.disabled=true; btn.textContent='Removing…'; }
-  fetch(API+'/portal/leads/'+encodeURIComponent(DM_ID)+'/hide?api_key='+API_KEY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({portal_id:S.portal_id||S.pub_id})})
-    .then(function(r){ return r.json(); })
-    .then(function(d){
-      if(!d.ok) throw new Error(d.error||'Failed');
-      ALL=ALL.filter(function(l){ return String(l.id)!==String(DM_ID); });
-      closeDetail();
-      if(typeof renderVertTabs==='function') renderVertTabs();
-      buildFilters(); updateKPIs(); renderTable();
-    })
-    .catch(function(e){ alert('Could not remove this lead: '+e.message); })
-    .then(function(){ if(btn){ btn.disabled=false; btn.textContent='Remove from my portal'; } });
-}
-function openDetail(id){ DM_ID=id;
+function openDetail(id){
   var l=ALL.find(function(x){return x.id===id;}); if(!l) return;
   document.getElementById('dm-title').textContent=((l.first_name||'')+' '+(l.last_name||'')).trim()||'Lead';
   document.getElementById('dm-sub').textContent=vertOf(l)+' · Lead KRW-'+l.id+' · submitted '+fmtDate(l.received_at)+' '+fmtTime(l.received_at)+' ET';
