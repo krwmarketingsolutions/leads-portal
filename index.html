@@ -439,6 +439,11 @@ var PRIORITY = {
   'KRW-LEADBLOOM': {
     'MVA': { list: 'AZ, FL, GA, IL, IN, IA, MI, MN, MO, MT, NE, NV, NM, NY, ND, OK, TN, TX, UT, WI, WY', note: 'MVA leads are accepted from these 21 states. Leads from other states are accepted at lower priority. CA and CO are not accepted.' }
   },
+  // Zizye Ltd (ZIZYE-RS-*): Rideshare only, nationwide (Nov 23)
+  'ZIZYE-RS': {
+    'MVA':       { list: 'Nationwide', note: 'Rideshare leads are accepted from every U.S. state, 24/7.' },
+    'Rideshare': { list: 'Nationwide', note: 'Rideshare leads are accepted from every U.S. state, 24/7.' }
+  },
   'LA-HI': {
     'MVA':       { list: 'FL, GA, TX, MI, IN, IL, WI, MN, MO, NE, OK, TN', note: 'MVA leads are accepted from these 12 states only. Leads from other states are not delivered.' },
     'Rideshare': { list: 'Nationwide', note: 'Rideshare leads are accepted from every state.' },
@@ -462,6 +467,7 @@ function showPortal(){
   document.getElementById('wb-name').textContent='Welcome back, '+first+'!';
   document.getElementById('wb-id').textContent='Portal ID: '+(S.portal_id||S.pub_id);
   applyPriority();
+  if(/^ZIZYE-RS/i.test(String(S.portal_id||''))){ var tc=document.getElementById('tb-camp'); if(tc) tc.textContent='Rideshare'; }
   loadLeads(); loadPostbackSettings();
   if(!window._tick) window._tick=setInterval(function(){ if(S) loadLeads(true); },120000);
 }
