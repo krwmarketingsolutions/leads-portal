@@ -177,6 +177,22 @@ tbody tr:hover td{background:var(--paper);}
 .chip.on{background:var(--green);color:var(--paper);border-color:var(--green);} .chip.on b{color:var(--paper);}
 .b-acc{background:var(--green-soft);color:var(--green);}
 .b-signed{background:var(--green);color:var(--paper);}
+/* rideshare stages (patch 416) */
+.sg{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;}
+.sg::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.85;}
+.sg-blue{background:#DFE9F5;color:#2B5C8F;} .sg-slate{background:#E6E8EC;color:#4D5866;}
+.sg-amber{background:#F6E8CC;color:#8A5A12;} .sg-purple{background:#ECE3F3;color:#5E3A7E;}
+.sg-teal{background:#D8ECEA;color:#1E6660;} .sg-green{background:var(--green-soft);color:var(--green);}
+.sg-red{background:var(--red-soft);color:var(--red);} .sg-grey{background:var(--paper-2);color:var(--ink-3);}
+.rs-prog{display:flex;gap:4px;margin:12px 0 4px;}
+.rs-prog .seg{flex:1;height:6px;border-radius:3px;background:var(--paper-2);}
+.rs-prog .seg.on{background:var(--green-2);}
+.rs-prog-l{display:flex;justify-content:space-between;font-size:10px;color:var(--ink-3);}
+.rs-key{background:var(--white);border:1px solid var(--line);border-top:3px solid var(--green);padding:14px 18px;margin-bottom:22px;}
+.rs-key summary{cursor:pointer;font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--ink-3);list-style:none;}
+.rs-key summary::-webkit-details-marker{display:none;}
+.rs-key .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px 18px;margin-top:12px;}
+.rs-key .grid div{font-size:12px;color:var(--ink-2);line-height:1.45;}
 .b-rej{background:var(--red-soft);color:var(--red);}
 .b-open{background:var(--brown-soft);color:var(--brown);}
 .b-sub{background:var(--paper-2);color:var(--ink-3);}
@@ -270,7 +286,17 @@ th.sortable:hover{color:var(--ink);}
       </div>
     </div>
 
-    <div class="card">
+    <details class="rs-key" id="rs-key" style="display:none"><summary>RIDESHARE STATUS KEY &#9662;</summary><div class="grid">
+  <div><span class="sg sg-blue">Contacting lead</span><br>Intake is reaching out to the claimant.</div>
+  <div><span class="sg sg-slate">Attempting contact</span><br>Called, no answer yet. Intake keeps dialing.</div>
+  <div><span class="sg sg-amber">Collecting documents</span><br>Claimant reached. Gathering what is needed to create the case.</div>
+  <div><span class="sg sg-purple">Verifying claim</span><br>Investigating the claims and putting the case documents together.</div>
+  <div><span class="sg sg-teal">Pending attorney review</span><br>Case package complete, with the attorney for review.</div>
+  <div><span class="sg sg-green">Retained</span><br>Claimant signed with the firm. Billable.</div>
+  <div><span class="sg sg-red">DQ</span><br>Did not meet the qualification requirements and was returned.</div>
+  <div><span class="sg sg-red">Closed</span><br>The case did not move forward after review.</div>
+</div></details>
+<div class="card">
       <div class="card-hdr">
         <div>
           <div class="card-title">Lead Log</div>
@@ -413,6 +439,10 @@ function badge(r){
   var cls={ 'Signed':'b-signed','Delivered':'b-pending','Rejected':'b-rej','Not delivered':'b-rej','In outreach':'b-open','Pending':'b-open','Not worked':'b-sub','Test':'b-sub' }[r]||'b-sub';
   return '<span class="badge '+cls+'">'+escH(r)+'</span>';
 }
+function stageBadge(st){ return '<span class="sg sg-'+escH(st.color||'grey')+'">'+escH(st.label)+'</span>'; }
+function statusCell(l){ return l.stage ? stageBadge(l.stage) : badge(l.response); }
+var RS_STEPS=['Contacting','Attempting','Documents','Verifying','Attorney review','Retained'];
+function stageProgress(st){ if(!st||!st.step) return ''; var h='<div class="rs-prog">'; for(var i=1;i<=6;i++) h+='<span class="seg'+(i<=st.step?' on':'')+'"></span>'; h+='</div><div class="rs-prog-l"><span>'+RS_STEPS[0]+'</span><span>'+RS_STEPS[5]+'</span></div>'; return h; }
 function inRange(iso){ if(!iso) return false; var d=new Date(iso); if(DATE_FROM && d<DATE_FROM) return false; if(DATE_TO && d>DATE_TO) return false; return true; }
 
 // ---------- session ----------
@@ -485,7 +515,7 @@ function loadLeads(quiet){
   fetch(API+'/portal/leads?portal_id='+encodeURIComponent(S.portal_id||S.pub_id)+'&api_key='+API_KEY)
   .then(function(r){return r.json();}).then(function(d){
     if(!d.ok) throw new Error(d.error||'Server error');
-    ALL=(d.leads||[]).filter(function(l){ return l.response!=='Test'; }); RATE=d.payout_rate||0; LAST_LOAD=new Date();
+    ALL=(d.leads||[]).filter(function(l){ return l.response!=='Test'; }); RATE=d.payout_rate||0; LAST_LOAD=new Date(); try{ document.getElementById('rs-key').style.display=ALL.some(function(l){return !!l.stage;})?'':'none'; }catch(e){}
     renderVertTabs(); buildFilters(); updateKPIs(); renderTable();
   }).catch(function(e){ document.getElementById('st-load').style.display='none'; document.getElementById('st-err').style.display=''; document.getElementById('st-err-msg').textContent=e.message; });
 }
@@ -590,7 +620,7 @@ function renderTable(){
       '<td style="font-weight:600">'+escH(((l.first_name||'')+' '+(l.last_name||'')).trim()||'—')+'</td>'+
       '<td style="font-family:monospace;font-size:12px;color:var(--ink-2)">'+escH(fmtPhone(l.phone))+'</td>'+
       '<td>'+escH(l.state||'—')+'</td>'+
-      '<td>'+badge(l.response)+(l.updated_at?'<div style="font-size:10.5px;color:var(--ink-3);margin-top:3px">updated '+timeAgo(l.updated_at)+'</div>':'')+'</td>'+
+      '<td>'+statusCell(l)+(l.updated_at?'<div style="font-size:10.5px;color:var(--ink-3);margin-top:3px">updated '+timeAgo(l.updated_at)+'</div>':'')+'</td>'+
       '<td class="notes-cell">'+(l.notes?escH(l.notes):'<span style="color:var(--line-2)">—</span>')+'</td>'+
       '<td>'+(l.payout>0?'<span class="pay">'+money(l.payout)+'</span>':'<span style="color:var(--line-2)">—</span>')+'</td>';
     tb.appendChild(tr);
@@ -632,7 +662,7 @@ function openDetail(id){ DM_ID=id;
   var l=ALL.find(function(x){return x.id===id;}); if(!l) return;
   document.getElementById('dm-title').textContent=((l.first_name||'')+' '+(l.last_name||'')).trim()||'Lead';
   document.getElementById('dm-sub').textContent=vertOf(l)+' · Lead KRW-'+l.id+' · submitted '+fmtDate(l.received_at)+' '+fmtTime(l.received_at)+' ET';
-  document.getElementById('dm-response').innerHTML=badge(l.response)+(l.notes?'<div style="margin-top:8px">'+escH(l.notes)+'</div>':'')+(l.payout>0?'<div style="margin-top:6px" class="pay">Payout '+money(l.payout)+'</div>':'')+(l.updated_at?'<div style="font-size:11px;color:var(--ink-3);margin-top:6px">Last update '+fmtDate(l.updated_at)+' ('+timeAgo(l.updated_at)+')</div>':'');
+  document.getElementById('dm-response').innerHTML=statusCell(l)+(l.stage?stageProgress(l.stage):'')+(l.notes?'<div style="margin-top:8px">'+escH(l.notes)+'</div>':'')+(l.payout>0?'<div style="margin-top:6px" class="pay">Payout '+money(l.payout)+'</div>':'')+(l.updated_at?'<div style="font-size:11px;color:var(--ink-3);margin-top:6px">Last update '+fmtDate(l.updated_at)+' ('+timeAgo(l.updated_at)+')</div>':'');
   var f=[['Phone',fmtPhone(l.phone)],['Email',l.email],['State',l.state],['Zip',l.zip],['Incident date',l.incident_date],['Injury',l.injury],['At fault',l.at_fault],['Has attorney',l.have_attorney],['TrustedForm',l.trustedform?'<a href="'+escH(l.trustedform)+'" target="_blank" rel="noopener">View certificate</a>':null]];
   document.getElementById('dm-fields').innerHTML=f.filter(function(x){return x[1];}).map(function(x){ return '<div class="field-row"><span class="fl">'+x[0]+'</span><span class="fv">'+(x[0]==='TrustedForm'?x[1]:escH(x[1]))+'</span></div>'; }).join('');
   var tl=[{t:'Submitted',d:fmtDate(l.received_at)+' '+fmtTime(l.received_at)+' ET',on:true}];
@@ -642,6 +672,7 @@ function openDetail(id){ DM_ID=id;
   if(l.response==='Signed') tl.push({t:'Signed',d:'Case retained'+(l.payout>0?' · '+money(l.payout):''),on:true});
   else if(l.response==='Rejected') tl.push({t:'Rejected after review',d:l.notes||'',on:false});
   else if(l.response==='In outreach'||l.response==='Pending') tl.push({t:l.response,d:l.notes||'Buyer is working the lead',on:true});
+  if(l.stage && l.stage.key!=='delivered'){ tl[tl.length-1]={t:l.stage.label,d:l.stage.desc,on:l.response!=='Rejected'}; }
   if(l.updated_at) tl[tl.length-1].d+=' · '+fmtDate(l.updated_at);
   document.getElementById('dm-timeline').innerHTML=tl.map(function(x){ return '<li><span class="dot'+(x.on?'':' muted')+'"></span><div class="tl-body"><div class="tl-t">'+escH(x.t)+'</div><div class="tl-d">'+escH(x.d)+'</div></div></li>'; }).join('');
   document.getElementById('detail-modal').classList.add('open');
